@@ -1,0 +1,11 @@
+{
+    "name": "Flowey",
+    "main": "www/index.html",
+    "window": {
+        "title": "",
+        "toolbar": false,
+        "width": 816,
+        "height": 624,
+        "icon": "www/icon/icon.png"
+    }
+}

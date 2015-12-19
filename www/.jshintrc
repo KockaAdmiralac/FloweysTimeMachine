@@ -1,0 +1,11 @@
+{
+    "strict": true,
+    "eqeqeq": true,
+    "undef": true,
+    "unused": true,
+    "browser": true,
+    "shadow": "outer",
+    "globals": {
+        "nw": false,
+    }
+}

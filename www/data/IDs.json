@@ -1,0 +1,124 @@
+{
+    "name": "id",
+    "ids": [
+        "floweyimg",
+        {
+            "name":"tab",
+            "ids": [
+                "1",
+                "2",
+                "3",
+                "4"
+            ]
+        },
+        {
+            "name":"ini",
+            "ids":[
+                "location",
+                "kills",
+                "love",
+                {
+                    "name": "fun",
+                    "ids": [
+                        "check",
+                        "label",
+                        "value"
+                    ]
+                },
+                {
+                    "name": "omegaFlowey",
+                    "ids": [
+                        "trapped",
+                        "battleInit",
+                        "deaths"
+                    ]
+                }
+            ]
+        }
+        {
+            "name": "sav",
+            "ids": [
+                "name",
+                "location",
+                "kills",
+                "unkkills",
+                "weapon",
+                "armor",
+                "love",
+                "hp",
+                "exp",
+                "gold",
+                "at",
+                "weaponat",
+                "df",
+                "armordf",
+                "exitedtruelab",
+                "havecell",
+                {
+                    "name": "kill",
+                    "ids": [
+                        "dungeon",
+                        "waterfall",
+                        "hotland"
+                    ]
+                },
+                {
+                    "name": "state",
+                    "ids": [
+                        "toriel",
+                        "shyren",
+                        "maddummy",
+                        "undyne1",
+                        "undyne2",
+                        "broguards",
+                        "muffet",
+                        "mettaton"
+                    ]
+                },
+                {
+                    "name": "invslot",
+                    "ids": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                    ]
+                }
+                {
+                    "name": "cellslot",
+                    "ids": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "builtinpreset",
+            "ids": [
+                "load",
+                "select"
+            ]
+        },
+        {
+            "name": "userpreset",
+            "ids": [
+                "load",
+                "save",
+                "new",
+                "delete",
+                "select"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,66 @@
+{
+    "toriel": {
+        "0": "Initial state",
+        "3": "Unknown",
+        "4": "Killed",
+        "5": "Unknown"
+    },
+    "comedian" : {
+        "0": "Initial state",
+        "1": "Unknown",
+        "2": "Killed"
+    },
+    "doggo" : {
+        "0": "Initial state",
+        "1": "Killed"
+    },
+    "dogamyDogaressa": {
+        "0": "Initial state",
+        "1": "Killed",
+        "2": "Played fetch (?)"
+    },
+    "greaterDog": {
+        "0": "Initial state",
+        "1": "Killed",
+        "3": "Unknown"
+    },
+    "papyrus": {
+        "0": "Initial state",
+        "1": "Killed"
+    },
+    "trainingDummy": {
+        "0": "Initial state",
+        "1": "Killed",
+        "2": "Talked to",
+        "3": "Tired of your shenanigans"
+    },
+    "shyren": {
+        "0": "Initial state",
+        "1": "Killed",
+        "2": "Unknown"
+    },
+    "madDummy": {
+        "0": "Initial state",
+        "1": "Killed"
+    },
+    "undyne1": {
+        "0": "Initial state",
+        "1": "Killed"
+    },
+    "undyne2": {
+        "0": "Initial state",
+        "1": "Killed"
+    },
+    "broGuards": {
+        "0": "Initial state",
+        "1": "Killed"
+    },
+    "mettaton": {
+        "0": "Initial state",
+        "1": "Killed"
+    },
+    "muffet": {
+        "0": "Initial state",
+        "1": "Killed"
+    }
+}

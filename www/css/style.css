@@ -1,0 +1,124 @@
+* {
+    font-family: Comic Sans MS; /* LOL, I had to :) */
+    transition: all 0.5s;
+}
+
+body {
+    background-color: black;
+    color: white;
+}
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+form fieldset {
+    display: flex;
+    flex-direction: column;
+}
+
+#nav {
+  display: inline-block;
+  margin: 0;
+  padding: 10px;
+  width: 100%;
+}
+
+input[type=button] {
+    border-radius: 5px;
+    color: #000000;
+    padding: 2px;
+    background-color: #FFFFFF;
+    width: 100%;
+    margin-top: 10px;
+}
+
+
+input[type=button]:hover {
+    color: #FFFFFF;
+    background-color: #000000;
+}
+
+input[type=button]:active {
+    color: #000000;
+    background-color: #000000;
+}
+
+input[type=text] {
+    padding: 2px;
+    border-radius: 5px;
+    width: 100%;
+    color: #FFFFFF;
+    background-color: #000000;
+    transition: all 1s ease 0s;
+}
+
+input[type=text]:focus {
+    color: #000000;
+    background-color: #FFFFFF;
+}
+
+select {
+    transition: none;
+    width: 100%;
+    padding: 2px;
+    border-radius: 5px;
+    color: #FFFFFF;
+    background-color: #000000;
+}
+
+select:focus {
+    color: #000000;
+    background-color: #FFFFFF;
+}
+
+#nav li {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  width: 24%;
+  text-align: center;
+}
+
+#nav li a {
+  text-decoration: none;
+  font: 24px solid red;
+}
+
+#nav li a:hover {
+  box-shadow: 5px 5px 5px #FFFFFF;
+  border-radius: 5px;
+}
+
+#nav li a:active {
+  box-shadow: 5px 5px 5px #FFFFFF inset;
+  border-radius: 5px;
+}
+
+#tab-1, #tab-2, #tab-3, #tab-4 {
+    display: none;
+}
+
+#tab-2 {
+    width: 120%;
+    overflow: scroll;
+    /*direction: rtl;*/
+    border: 1px solid black;
+}
+
+header {
+  text-align: center;
+}
+
+header img {
+  float: left;
+}
+
+#tab-4 {
+  height : 550px;
+  width : 98%;
+  border:1px solid #ccc;
+  overflow:auto;
+  padding: 10px;
+}
