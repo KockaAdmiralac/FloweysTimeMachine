@@ -43,9 +43,9 @@
               </div>
               <fieldset>
                   <legend> Omega Flowey </legend>
-                  <label> Trapped in Flowey's World </label> <input type="checkbox" id="ini-omega-flowey-trapped" />
-                  <label> Initiated battle </label> <input type="checkbox" id="ini-omega-flowey-battle-init" />
-                  <label> How many times you died </label> <input type="text" id="ini-omega-flowey-deaths" />
+                  <label> Trapped in Flowey's World </label> <input type="checkbox" id="ini-omegaFlowey-trapped" />
+                  <label> Initiated battle </label> <input type="checkbox" id="ini-omegaFlowey-battleInit" />
+                  <label> How many times you died </label> <input type="text" id="ini-omegaFlowey-deaths" />
               </fieldset>
           </form>
         </div>
@@ -116,18 +116,18 @@
               <div>
                   <fieldset>
                       <legend> Ruins </legend>
-                      <label> Kill count </label> <input type="text" id="sav-dungeonkills" />
-                      <label>Training Dummy State</label> <select id="sav-trainingdummystate"> </select>
-                      <label>Toriel State</label> <select id="sav-torielstate"> </select>
+                      <label> Kill count </label> <input type="text" id="sav-kill-dungeon" />
+                      <label>Training Dummy State</label> <select id="sav-state-trainingdummy"> </select>
+                      <label>Toriel State</label> <select id="sav-state-toriel"> </select>
                   </fieldset>
                   <fieldset>
                       <legend> Snowdin </legend>
-                      <label>Kill count</label> <input type="text" id="sav-snowdinkills" />
-                      <label>Doggo State</label> <select id="sav-doggostate"> </select>
-                      <label>Dogamy &amp; Dogaressa State</label> <select id="sav-dogamydogaressastate"> </select>
-                      <label>Greater Dog State</label> <select id="sav-greaterdogstate"> </select>
-                      <label>Comedian State</label> <select id="sav-comedianstate"> </select>
-                      <label>Papyrus State</label> <select id="sav-papyrusstate"> </select>
+                      <label>Kill count</label> <input type="text" id="sav-kill-snowdin" />
+                      <label>Doggo State</label> <select id="sav-state-doggo"> </select>
+                      <label>Dogamy &amp; Dogaressa State</label> <select id="sav-state-dogamydogaressa"> </select>
+                      <label>Greater Dog State</label> <select id="sav-state-greaterdog"> </select>
+                      <label>Comedian State</label> <select id="sav-state-comedian"> </select>
+                      <label>Papyrus State</label> <select id="sav-state-papyrus"> </select>
                   </fieldset>
                   </div>
                   <div>
@@ -159,18 +159,18 @@
             <div>
               <fieldset>
                 <legend> Built-in Presets </legend>
-                <select id="builtinpresetselect"> </select>
-                <input type="button" id="builtinpreset-load" value="Load" />
+                <select id="preset-builtin-select"> </select>
+                <input type="button" id="preset-builtin-load" value="Load" />
               </fieldset>
             </div>
             <div>
               <fieldset>
                 <legend> Your Presets </legend>
-                <select id="userpreset-select"> </select>
-                <input type="button" id="userpreset-load" value="Load" disabled />
-                <input type="button" id="userpreset-save" value="Save" disabled />
-                <input type="button" id="userpreset-new" value="New" />
-                <input type="button" id="userpreset-delete" value="Delete" disabled />
+                <select id="preset-user-select"> </select>
+                <input type="button" id="preset-user-load" value="Load" disabled />
+                <input type="button" id="preset-user-save" value="Save" disabled />
+                <input type="button" id="preset-user-new" value="New" />
+                <input type="button" id="preset-user-delete" value="Delete" disabled />
               </fieldset>
             </div>
             <fieldset>
@@ -185,13 +185,13 @@
             <div>
               <fieldset>
                 <legend> Default INI </legend>
-                <input id="ini-default-save" type="button" value="Save"/>
-                <input id="ini-default-load" type="button" value="Load"/>
+                <input id="default-save-ini" type="button" value="Save"/>
+                <input id="default-load-ini" type="button" value="Load"/>
               </fieldset>
               <fieldset>
                 <legend> Default SAVE </legend>
-                <input id="sav-default-save" type="button" value="Save"/>
-                <input id="sav-default-load" type="button" value="Load"/>
+                <input id="default-save-sav" type="button" value="Save"/>
+                <input id="default-load-sav" type="button" value="Load"/>
               </fieldset>
             </div>
           </form>

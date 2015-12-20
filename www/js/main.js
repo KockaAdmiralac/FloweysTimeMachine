@@ -188,9 +188,8 @@ function parseIniFromText(text)
 function floweyLaughOnce()
 {
     "use strict";
-    document.getElementById("floweyimg").src = "/www/img/flowey_evil.png";
-    var audio = document.getElementById("audio");
-    audio.play();
+    id.floweyimg.src = "/www/img/flowey_evil.png";
+    id.audio.play();
 }
 
 /**
@@ -209,8 +208,7 @@ function insert(node, i, array)
     newOption.setAttribute("value", i);
     var newContent = document.createTextNode(array[i]);
     newOption.appendChild(newContent);
-    var select = document.getElementById(node);
-    select.appendChild(newOption);
+    node.appendChild(newOption);
 }
 
 /**
@@ -223,9 +221,9 @@ function insertInvLists()
     "use strict";
     for (var i = 0; i < items.length; ++i)
     {
-        for (var j = 1; j <= 8; ++j) insert("sav-invslot" + j, i, items);
-        insert("sav-weapon", i, items);
-        insert("sav-armor", i, items);
+        for (var j = 1; j <= 8; ++j) insert(id.sav.invslot[j], i, items);
+        insert(id.sav.weapon, i, items);
+        insert(id.sav.armor, i, items);
     }
 }
 
@@ -237,7 +235,7 @@ function insertInvLists()
 function insertCellLists()
 {
     "use strict";
-    for (var i = 1; i <= 8; i++) loadSelectFromObj("sav-cellslot" + i, cellOpts);
+    for (var i = 1; i <= 8; i++) loadSelectFromObj(id.sav.cellslot[i], cellOpts);
 }
 
 /**
@@ -261,19 +259,21 @@ function loadSelectFromObj(selectId, obj)
 function updatePersistentDataForm()
 {
     "use strict";
-    document.getElementById("ini-name").value = ini.General.Name;
-    document.getElementById("ini-location").value = parseInt(ini.General.Room.trim());
-    document.getElementById("ini-kills").value = parseInt(ini.General.Kills.trim());
-    document.getElementById("ini-love").value = parseInt(ini.General.Love.trim());
-    document.getElementById("ini-fun").checked = (ini.General.Fun !== undefined);
+    var hasFun = ini.General.Fun !== undefined;
+    id.ini.name.value = ini.General.Name;
+    id.ini.location.value = parseInt(ini.General.Room.trim());
+    id.ini.kills.value = parseInt(ini.General.Kills.trim());
+    id.ini.love.value = parseInt(ini.General.Love.trim());
+    id.ini.fun.checked = hasFun;
+    id.ini.fun.value.value = parseInt(ini.General[hasFun ? "Fun" : "fun"]);
     updateFunForm();
     if (ini.FFFFF)
     {
-        if (ini.FFFFF.F) document.getElementById("ini-omega-flowey-trapped").checked = (parseInt(ini.FFFFF.F.trim()) === 1);
-        if (ini.FFFFF.P) document.getElementById("ini-omega-flowey-battle-init").checked = (parseInt(ini.FFFFF.P.trim()) === 1);
-        if (ini.FFFFF.D) document.getElementById("ini-omega-flowey-deaths").value = parseInt(ini.FFFFF.D.trim());
+        if (ini.FFFFF.F) id.ini.omegaFlowey.trapped.checked = (parseInt(ini.FFFFF.F.trim()) === 1);
+        if (ini.FFFFF.P) id.ini.omegaFlowey.battleInit.checked = (parseInt(ini.FFFFF.P.trim()) === 1);
+        if (ini.FFFFF.D) id.ini.omegaFlowey.deaths.value = parseInt(ini.FFFFF.D.trim());
     }
-    else document.getElementById("ini-omega-flowey-trapped").checked = false;
+    else id.ini.omegaFlowey.trapped.checked = false;
 }
 
 /**
@@ -285,27 +285,36 @@ function updateIniFromForm()
 {
     "use strict";
     var ini = window.ini;
-    ini.General.Name = document.getElementById("ini-name").value;
-    ini.General.Room = document.getElementById("ini-location").value;
-    ini.General.Kills = document.getElementById("ini-kills").value;
-    ini.General.Love = document.getElementById("ini-love").value;
-    if (document.getElementById("ini-omega-flowey-trapped").checked)
+    ini.General.Name = id.ini.name.value;
+    ini.General.Room = id.ini.location.value;
+    ini.General.Kills = id.ini.kills.value;
+    ini.General.Love = id.ini.love.value;
+    if (id.ini.omegaFlowey.trapped.checked)
     {
         if (!ini.FFFFF) ini.FFFFF = {};
         ini.FFFFF.F = "1";
     }
     else if (ini.FFFFF) ini.FFFFF.F = "0";
-    if (document.getElementById("ini-omega-flowey-battle-init").checked)
+    if (id.ini.omegaFlowey.battleInit.checked)
     {
         if (!ini.FFFFF) ini.FFFFF = {};
         ini.FFFFF.P = "1";
     }
     else if (ini.FFFFF) ini.FFFFF.P = "0";
-    var timesDied = parseInt(document.getElementById("ini-omega-flowey-deaths").value);
+    var timesDied = parseInt(id.ini.omegaFlowey.deaths.value);
     if (timesDied)
     {
         if(!ini.FFFFFF) ini.FFFFF = {};
         else ini.FFFFF.D = timesDied;
+    }
+    if(id.ini.fun.check.checked)
+    {
+        var funValue = parseInt(id.ini.fun.value.value);
+        if(funValue)
+        {
+            ini.General.Fun = funValue;
+            delete ini.General.fun;
+        }
     }
 }
 
@@ -322,7 +331,7 @@ function updateSelection(id, values, index, list)
 {
     "use strict";
     var value = parseInt(values[index].trim());
-    if (list[value]) document.getElementById(id).value = value;
+    if (list[value]) id.value = value;
     else window.alert("Unknown value '" + value + "' for line " + (index + 1) + " (" + id + ").\n" + "If you think this is a valid value, report an issue at https://github.com/crumblingstatue/FloweysTimeMachine/issues");
 }
 
@@ -335,45 +344,45 @@ function updateSaveDataForm()
 {
     "use strict";
     var values = saveLines;
-    document.getElementById("sav-name").value = values[0];
-    document.getElementById("sav-kills").value = values[11];
-    document.getElementById("sav-love").value = values[1];
-    document.getElementById("sav-hp").value = values[2];
-    document.getElementById("sav-exp").value = values[9];
-    document.getElementById("sav-gold").value = values[10];
-    document.getElementById("sav-at").value = values[4];
-    document.getElementById("sav-weaponat").value = values[5];
-    document.getElementById("sav-df").value = values[6];
-    document.getElementById("sav-armordf").value = values[7];
+    id.sav.name.value       = values[0];
+    id.sav.love.value       = values[1];
+    id.sav.hp.value         = values[2];
+    id.sav.at.value         = values[4];
+    id.sav.kills.value      = values[11];
+    id.sav.weaponat.value   = values[5];
+    id.sav.df.value         = values[6];
+    id.sav.armordf.value    = values[7];
+    id.sav.exp.value        = values[9];
+    id.sav.gold.value       = values[10];
     for (var i = 0; i < 8; i++)
     {
-        updateSelection("sav-invslot" + (i + 1), values, 12 + (i * 2), window.items);
-        updateSelection("sav-cellslot" + (i + 1), values, 13 + (i * 2), window.cellOpts);
+        updateSelection(id.sav.invslot[i + 1], values, 12 + (i * 2), window.items);
+        updateSelection(id.sav.cellslot[i + 1], values, 13 + (i * 2), window.cellOpts);
     }
-    updateSelection("sav-weapon", values, 28, window.items);
-    updateSelection("sav-armor", values, 29, window.items);
-    updateSelection("sav-trainingdummystate", values, 44, window.states.trainingDummy);
-    updateSelection("sav-torielstate", values, 75, window.states.toriel);
-    updateSelection("sav-doggostate", values, 82, window.states.doggo);
-    updateSelection("sav-dogamydogaressastate", values, 83, window.states.dogamyDogaressa);
-    updateSelection("sav-greaterdogstate", values, 84, window.states.greaterDog);
-    updateSelection("sav-comedianstate", values, 87, window.states.comedian);
-    updateSelection("sav-papyrusstate", values, 97, window.states.papyrus);
-    updateSelection("sav-shyrenstate", values, 111, window.states.shyren);
-    document.getElementById("sav-unkkills").value = values[231];
-    document.getElementById("sav-dungeonkills").value = values[232];
-    document.getElementById("sav-snowdinkills").value = values[233];
-    document.getElementById("sav-waterfallkills").value = values[234];
-    document.getElementById("sav-hotlandkills").value = values[235];
-    updateSelection("sav-undynestate1", values, 281, window.states.undyne1);
-    updateSelection("sav-maddummystate", values, 282, window.states.madDummy);
-    updateSelection("sav-undynestate2", values, 380, window.states.undyne2);
-    updateSelection("sav-muffetstate", values, 427, window.states.muffet);
-    updateSelection("sav-broguardsstate", values, 432, window.states.broGuards);
-    updateSelection("sav-mettatonstate", values, 455, window.states.mettaton);
-    document.getElementById("sav-exitedtruelab").checked = (parseInt(values[523].trim()) === 12);
-    document.getElementById("sav-havecell").checked = (parseInt(values[545].trim()) === 1);
-    document.getElementById("sav-location").value = parseInt(values[547].trim());
+    updateSelection(id.sav.weapon, values, 28, window.items);
+    updateSelection(id.sav.armor, values, 29, window.items);
+    updateSelection(id.sav.state.trainingdummy, values, 44, window.states.trainingDummy);
+    updateSelection(id.sav.state.toriel, values, 75, window.states.toriel);
+    updateSelection(id.sav.state.doggo, values, 82, window.states.doggo);
+    updateSelection(id.sav.state.dogamydogaressa, values, 83, window.states.dogamyDogaressa);
+    updateSelection(id.sav.state.greaterdog, values, 84, window.states.greaterDog);
+    updateSelection(id.sav.state.comedian, values, 87, window.states.comedian);
+    updateSelection(id.sav.state.papyrus, values, 97, window.states.papyrus);
+    updateSelection(id.sav.state.shyren, values, 111, window.states.shyren);
+    updateSelection(id.sav.state.undyne1, values, 281, window.states.undyne1);
+    updateSelection(id.sav.state.maddummy, values, 282, window.states.madDummy);
+    updateSelection(id.sav.state.undyne2, values, 380, window.states.undyne2);
+    updateSelection(id.sav.state.muffet, values, 427, window.states.muffet);
+    updateSelection(id.sav.state.broguards, values, 432, window.states.broGuards);
+    updateSelection(id.sav.state.mettaton, values, 455, window.states.mettaton);
+    id.sav.unkkills.value = values[231];
+    id.sav.kill.dungeon.value = values[232];
+    id.sav.kill.snowdin.value = values[233];
+    id.sav.kill.hotland.value = values[235];
+    id.sav.kill.waterfall.value = values[234];
+    id.sav.exitedtruelab.checked = (parseInt(values[523].trim()) === 12);
+    id.sav.havecell.checked = (parseInt(values[545].trim()) === 1);
+    id.sav.location.value = parseInt(values[547].trim());
 }
 
 /**
@@ -385,63 +394,53 @@ function updateSaveDataForm()
 function updateSaveValuesFromForm()
 {
     "use strict";
-    saveLines[0] = document.getElementById("sav-name").value;
-    saveLines[1] = document.getElementById("sav-love").value;
-    saveLines[2] = document.getElementById("sav-hp").value;
-    saveLines[4] = document.getElementById("sav-at").value;
-    saveLines[5] = document.getElementById("sav-weaponat").value;
-    saveLines[6] = document.getElementById("sav-df").value;
-    saveLines[7] = document.getElementById("sav-armordf").value;
-    saveLines[9] = document.getElementById("sav-exp").value;
-    saveLines[10] = document.getElementById("sav-gold").value;
-    saveLines[11] = document.getElementById("sav-kills").value;
-    saveLines[12] = document.getElementById("sav-invslot1").value;
-    saveLines[13] = document.getElementById("sav-cellslot1").value;
-    saveLines[14] = document.getElementById("sav-invslot2").value;
-    saveLines[15] = document.getElementById("sav-cellslot2").value;
-    saveLines[16] = document.getElementById("sav-invslot3").value;
-    saveLines[17] = document.getElementById("sav-cellslot3").value;
-    saveLines[18] = document.getElementById("sav-invslot4").value;
-    saveLines[19] = document.getElementById("sav-cellslot4").value;
-    saveLines[20] = document.getElementById("sav-invslot5").value;
-    saveLines[21] = document.getElementById("sav-cellslot5").value;
-    saveLines[22] = document.getElementById("sav-invslot6").value;
-    saveLines[23] = document.getElementById("sav-cellslot6").value;
-    saveLines[24] = document.getElementById("sav-invslot7").value;
-    saveLines[25] = document.getElementById("sav-cellslot7").value;
-    saveLines[26] = document.getElementById("sav-invslot8").value;
-    saveLines[27] = document.getElementById("sav-cellslot8").value;
-    saveLines[28] = document.getElementById("sav-weapon").value;
-    saveLines[29] = document.getElementById("sav-armor").value;
-    saveLines[44] = document.getElementById("sav-trainingdummystate").value;
-    saveLines[75] = document.getElementById("sav-torielstate").value;
-    saveLines[82] = document.getElementById("sav-doggostate").value;
-    saveLines[83] = document.getElementById("sav-dogamydogaressastate").value;
-    saveLines[84] = document.getElementById("sav-greaterdogstate").value;
-    saveLines[87] = document.getElementById("sav-comedianstate").value;
-    saveLines[97] = document.getElementById("sav-papyrusstate").value;
-    saveLines[111] = document.getElementById("sav-shyrenstate").value;
-    saveLines[231] = document.getElementById("sav-unkkills").value;
-    saveLines[232] = document.getElementById("sav-dungeonkills").value;
-    saveLines[233] = document.getElementById("sav-snowdinkills").value;
-    saveLines[234] = document.getElementById("sav-waterfallkills").value;
-    saveLines[235] = document.getElementById("sav-hotlandkills").value;
-    saveLines[281] = document.getElementById("sav-undynestate1").value;
-    saveLines[282] = document.getElementById("sav-maddummystate").value;
-    saveLines[380] = document.getElementById("sav-undynestate2").value;
-    saveLines[427] = document.getElementById("sav-muffetstate").value;
-    saveLines[432] = document.getElementById("sav-broguardsstate").value;
-    saveLines[455] = document.getElementById("sav-mettatonstate").value;
-    saveLines[523] = document.getElementById("sav-exitedtruelab").checked ? "12" : "0";
-    saveLines[545] = document.getElementById("sav-havecell").checked ? "1" : "0";
-    saveLines[547] = document.getElementById("sav-location").value;
+    saveLines[0] = id.sav.name.value;
+    saveLines[1] = id.sav.love.value;
+    saveLines[2] = id.sav.hp.value;
+    saveLines[4] = id.sav.at.value;
+    saveLines[5] = id.sav.weaponat.value;
+    saveLines[6] = id.sav.df.value;
+    saveLines[7] = id.sav.armordf.value;
+    saveLines[9] = id.sav.exp.value;
+    saveLines[10] = id.sav.gold.value;
+    saveLines[11] = id.sav.kills.value;
+    for(var i = 0; i < 8; ++i)
+    {
+        saveLines[12 + i * 2] = id.sav.invslot[i + 1].value;
+        saveLines[12 + i * 2 + 1] = id.sav.cellslot[i + 1].value
+    }
+    saveLines[28] = id.sav.weapon.value;
+    saveLines[29] = id.sav.armor.value;
+    saveLines[35] = id.ini.fun.value.value;
+    saveLines[44] = id.sav.state.trainingdummy.value;
+    saveLines[75] = id.sav.state.toriel.value;
+    saveLines[82] = id.sav.state.doggo.value;
+    saveLines[83] = id.sav.state.dogamydogaressa.value;
+    saveLines[84] = id.sav.state.greaterdog.value;
+    saveLines[87] = id.sav.state.comedian.value;
+    saveLines[97] = id.sav.state.papyrus.value;
+    saveLines[111] = id.sav.state.shyren.value;
+    saveLines[231] = id.sav.unkkills.value;
+    saveLines[232] = id.sav.kill.dungeon.value;
+    saveLines[233] = id.sav.kill.snowdin.value;
+    saveLines[234] = id.sav.kill.waterfall.value;
+    saveLines[235] = id.sav.kill.hotland.value;
+    saveLines[281] = id.sav.state.undyne1.value;
+    saveLines[282] = id.sav.state.maddummy.value;
+    saveLines[380] = id.sav.state.undyne2.value;
+    saveLines[427] = id.sav.state.muffet.value;
+    saveLines[432] = id.sav.state.broguards.value;
+    saveLines[455] = id.sav.state.mettaton.value;
+    saveLines[523] = id.sav.exitedtruelab.checked ? "12" : "0";
+    saveLines[545] = id.sav.havecell.checked ? "1" : "0";
+    saveLines[547] = id.sav.location.value;
 }
 
 function updateFunForm()
 {
-    var checked = document.getElementById("ini-fun").checked;
-    document.getElementById("ini-fun-value").style.display = checked ? "block" : "none";
-    document.getElementById("ini-fun-label").style.display = checked ? "block" : "none";
+    var checked = id.ini.fun.check.checked;
+    id.ini.fun.value.style.display = checked ? "block" : "none";
+    id.ini.fun.label.style.display = checked ? "block" : "none";
 }
 
 /**
@@ -505,7 +504,7 @@ function systemInformationExists(i)
 function initPresetSelect()
 {
     "use strict";
-    for (var k in presets) if(presets.hasOwnProperty(k)) insert("builtinpresetselect", Object.keys(presets).indexOf(k), Object.keys(presets));
+    for (var k in presets) if(presets.hasOwnProperty(k)) insert(id.preset.builtin.select, Object.keys(presets).indexOf(k), Object.keys(presets));
 }
 
 /**
@@ -522,7 +521,7 @@ function initUserPresetData()
     else
     {
         var pres = JSON.parse(userPresets);
-        for (var key in pres) if(pres.hasOwnProperty(key)) insert("userpresetselect", key, pres);
+        for (var key in pres) if(pres.hasOwnProperty(key)) insert(id.preset.user.select, key, pres);
     }
 }
 
@@ -572,13 +571,13 @@ function saveUserPreset(name)
 function initSystemInformationSave(i)
 {
     "use strict";
-    document.getElementById("savesi" + i).addEventListener("click", function()
+    id.si.save[i].addEventListener("click", function()
     {
         if(confirm("This will affect your game. Continue?")) saveFile(undertaleDir + "system_information_96" + i, "", function()
         {
             floweyLaughOnce();
             alert("System information file created!");
-            document.getElementById("deletesi" + i).disabled = false;
+            id.si.delete[i].disabled = false;
         });
     }, false);
 }
@@ -592,7 +591,7 @@ function initSystemInformationSave(i)
 function initSystemInformationDelete(i)
 {
     "use strict";
-    var button = document.getElementById("deletesi" + i);
+    var button = id.si.delete[i];
     button.addEventListener('click', function()
     {
         if(confirm("This will affect your game. Continue?"))
@@ -632,17 +631,17 @@ function initSystemInformation(i)
 function initWeaponArmor()
 {
     "use strict";
-    var weaponSelect = document.getElementById("sav-weapon");
-    var armorSelect = document.getElementById("sav-armor");
+    var weaponSelect = id.sav.weapon;
+    var armorSelect = id.sav.armor;
     weaponSelect.onchange = function()
     {
         var at = weapons[weaponSelect.value];
-        if (typeof at !== "undefined") document.getElementById("sav-weaponat").value = at;
+        if (typeof at !== "undefined") id.sav.weaponat.value = at;
     };
     armorSelect.onchange = function()
     {
         var df = armors[armorSelect.value];
-        if (typeof df !== "undefined") document.getElementById("sav-armordf").value = df;
+        if (typeof df !== "undefined") id.sav.armordf.value = df;
     };
 }
 
@@ -655,23 +654,22 @@ function initWeaponArmor()
 function initUserPresetNew()
 {
     "use strict";
-    document.getElementById("userpresetnew").addEventListener("click", function()
+    id.preset.user.new.addEventListener("click", function()
     {
         var name = window.prompt("Enter the name for your new preset");
         if (name === null || name === "") window.alert("You did not enter a valid name, preset not created.");
         else
         {
             saveUserPreset(name);
-            var presetSelect = document.getElementById("userpresetselect");
+            var presetSelect = id.preset.user.select;
             var option = document.createElement("option");
             var text = document.createTextNode(name);
             option.appendChild(text);
             presetSelect.appendChild(option);
             presetSelect.value = name;
-            document.getElementById("userpresetload").disabled = false;
-            document.getElementById("userpresetsave").disabled = false;
-            document.getElementById("userpresetdelete").disabled = false;
-            document.getElementById("userpresetexport").disabled = false;
+            id.preset.user.load.disabled = false;
+            id.preset.user.save.disabled = false;
+            id.preset.user.delete.disabled = false;
         }
     }, false);
 }
@@ -685,9 +683,9 @@ function initUserPresetNew()
 function initUserPresetSave()
 {
     "use strict";
-    document.getElementById("userpresetsave").addEventListener("click", function()
+    id.preset.user.save.addEventListener("click", function()
     {
-        var name = document.getElementById("userpresetselect").value;
+        var name = id.preset.user.select.value;
         if (name !== null && name !== "") saveUserPreset(name);
         else window.alert("You need to select a valid preset first!");
     }, false);
@@ -702,9 +700,9 @@ function initUserPresetSave()
 function initUserPresetLoad()
 {
     "use strict";
-    document.getElementById("userpresetload").addEventListener("click", function()
+    id.preset.user.load.addEventListener("click", function()
     {
-        var name = document.getElementById("userpresetselect").value;
+        var name = id.preset.user.select.value;
         if (name !== null && name !== "")
         {
             var item = localStorage.getItem("userPresets");
@@ -728,9 +726,9 @@ function initUserPresetLoad()
 function initUserPresetDelete()
 {
     "use strict";
-    document.getElementById("userpresetdelete").addEventListener("click", function()
+    id.preset.user.delete.addEventListener("click", function()
     {
-        var selection = document.getElementById("userpresetselect");
+        var selection = id.preset.user.select;
         var name = selection.value;
         var children = selection.childNodes;
         for (var i = 0; i < children.length; i++) if (children[i].value === name) selection.removeChild(children[i]);
@@ -738,12 +736,11 @@ function initUserPresetDelete()
         var presets = JSON.parse(item);
         delete presets[name];
         localStorage.setItem("userPresets", JSON.stringify(presets));
-        if (document.getElementById("userpresetselect").value === "")
+        if (id.preset.user.select.value === "")
         {
-            document.getElementById("userpresetload").disabled = true;
-            document.getElementById("userpresetsave").disabled = true;
-            document.getElementById("userpresetdelete").disabled = true;
-            document.getElementById("userpresetexport").disabled = true;
+            id.preset.user.load.disabled = true;
+            id.preset.user.save.disabled = true;
+            id.preset.user.delete.disabled = true;
         }
     }, false);
 }
@@ -757,11 +754,11 @@ function initUserPresetDelete()
 function initUserPresetEnable()
 {
     "use strict";
-    if (document.getElementById("userpresetselect").value !== "")
+    if (id.preset.user.select.value !== "")
     {
-        document.getElementById("userpresetload").disabled = false;
-        document.getElementById("userpresetsave").disabled = false;
-        document.getElementById("userpresetdelete").disabled = false;
+        id.preset.user.load.disabled = false;
+        id.preset.user.save.disabled = false;
+        id.preset.user.delete.disabled = false;
     }
 }
 
@@ -790,9 +787,9 @@ function initUserPresets()
 function initBuiltinPresetLoad()
 {
     "use strict";
-    document.getElementById("builtinpresetload").addEventListener("click", function()
+    id.preset.builtin.load.addEventListener("click", function()
     {
-        var name = document.getElementById("builtinpresetselect").value;
+        var name = id.preset.builtin.select.value;
         loadPreset(name);
     }, false);
 }
@@ -806,10 +803,10 @@ function initBuiltinPresetLoad()
 function initFloweyImg()
 {
     "use strict";
-    if (localStorage.getItem("laughed") === "true") document.getElementById("floweyimg").src = "/www/img/flowey_evil.png";
-    document.getElementById("floweyimg").addEventListener("click", function()
+    if (localStorage.getItem("laughed") === "true") id.floweyimg.src = "/www/img/flowey_evil.png";
+    id.floweyimg.addEventListener("click", function()
     {
-        document.getElementById("floweyimg").src = "/www/img/flowey_wink.png";
+        id.floweyimg.src = "/www/img/flowey_wink.png";
         localStorage.setItem("laughed", false);
     }, false);
 }
@@ -837,7 +834,7 @@ function initDefaultControls(opt)
 function initDefaultLoad(opt)
 {
     "use strict";
-    document.getElementById(opt + "-default-load").addEventListener('click', function()
+    id.default.load[opt].addEventListener('click', function()
     {
         if(confirm("This will affect your game. Continue?"))
         {
@@ -864,7 +861,7 @@ function initDefaultLoad(opt)
 function initDefaultSave(opt)
 {
     "use strict";
-    document.getElementById(opt + "-default-save").addEventListener('click', function()
+    id.default.save[opt].addEventListener('click', function()
     {
         if(confirm("This will affect your game. Continue?"))
         {
@@ -884,7 +881,7 @@ function initDefaultSave(opt)
 
 function initFunCheckbox()
 {
-    document.getElementById("ini-fun").addEventListener('click', function()
+    id.ini.fun.check.addEventListener('click', function()
     {
         updateFunForm();
     }, false);
@@ -970,22 +967,9 @@ function onListsCreated()
 function createLists()
 {
     "use strict";
-    loadSelectFromObj("sav-location", rooms);
-    loadSelectFromObj("ini-location", rooms);
-    loadSelectFromObj("sav-torielstate", states.toriel);
-    loadSelectFromObj("sav-comedianstate", states.comedian);
-    loadSelectFromObj("sav-doggostate", states.doggo);
-    loadSelectFromObj("sav-dogamydogaressastate", states.dogamyDogaressa);
-    loadSelectFromObj("sav-greaterdogstate", states.greaterDog);
-    loadSelectFromObj("sav-papyrusstate", states.greaterDog);
-    loadSelectFromObj("sav-trainingdummystate", states.trainingDummy);
-    loadSelectFromObj("sav-shyrenstate", states.shyren);
-    loadSelectFromObj("sav-maddummystate", states.madDummy);
-    loadSelectFromObj("sav-undynestate1", states.undyne1);
-    loadSelectFromObj("sav-undynestate2", states.undyne2);
-    loadSelectFromObj("sav-broguardsstate", states.broGuards);
-    loadSelectFromObj("sav-muffetstate", states.muffet);
-    loadSelectFromObj("sav-mettatonstate", states.mettaton);
+    loadSelectFromObj(id.sav.location, rooms);
+    loadSelectFromObj(id.ini.location, rooms);
+    Object.keys(states).forEach(function(state) { loadSelectFromObj(id.sav.state[state.toLowerCase()], states[state]); }, this);
     insertInvLists();
     insertCellLists();
     onListsCreated();
@@ -994,7 +978,6 @@ function createLists()
 function createIDs()
 {
     createID(window, ids, "");
-    alert(JSON.stringify(window.id));
 }
 
 function createID(obj, node, string)
@@ -1021,8 +1004,9 @@ function createID(obj, node, string)
 function onLoaded()
 {
     "use strict";
-    createLists();
     createIDs();
+    showTab(3);
+    createLists();
     onListsCreated();
 }
 
@@ -1032,12 +1016,12 @@ function onLoaded()
  * @param {Number} id - iD of HTML div element that represents a tab that will be shown.
  * @author KockaAdmiralac
  */
-function showTab(id)
+function showTab(tabID)
 {
     "use strict";
-    if(currTab)document.getElementById("tab-" + currTab).style.display = "none";
-    document.getElementById("tab-" + id).style.display = "block";
-    currTab = id;
+    if(currTab)id.tab[currTab].style.display = "none";
+    id.tab[tabID].style.display = "block";
+    currTab = tabID;
 }
 
 /**
@@ -1067,7 +1051,6 @@ function start()
 {
     "use strict";
     loadData();
-    showTab(3);
 }
 
 document.addEventListener("DOMContentLoaded", start);
