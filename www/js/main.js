@@ -332,7 +332,7 @@ function updateSelection(id, values, index, list)
     "use strict";
     var value = parseInt(values[index].trim());
     if (list[value]) id.value = value;
-    else window.alert("Unknown value '" + value + "' for line " + (index + 1) + " (" + id + ").\n" + "If you think this is a valid value, report an issue at https://github.com/crumblingstatue/FloweysTimeMachine/issues");
+    else window.alert("Unknown value '" + value + "' for line " + (index + 1) + " (" + id + ").\n" + "If you think this is a valid value, report an issue at https://github.com/KockaAdmiralac/FloweysTimeMachine/issues");
 }
 
 /**
