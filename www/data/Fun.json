@@ -1,0 +1,68 @@
+{
+    "65": {
+        "name": "Sound Test",
+        "description": "You will be sent from room 47 (Snowdin Forest - Fishing Rod) to room 270 (Sound Test room).<br/>WARNING: This will set Fun value to 0",
+        "chance": "50%",
+        "condition": "None"
+    },
+    "56": {
+        "name": "'Nightmare Mode' Puzzle",
+        "description": "Sans' crossword will be in 'nightmare mode'",
+        "chance": "100%",
+        "condition": "None"
+    },
+    "66": {
+        "name": "Fake hallway (Gaster)",
+        "description": "After going from room 94 (Waterfall - Mouse) to the next room there is a chance of ending in a hallway.<br/>There is 10% chance that in that hallway will be grey door leading to room with a strange person that is believed to be W. D. Gaster.<br/>WARNING: This will set Fun value to 0",
+        "chance": "100%",
+        "condition": "None"
+    },
+    "80-89": {
+        "name": "Clam Girl (Suzy)",
+        "description": "A clamgirl talking about their neighbour, Suzy, will appear in room 116 (Waterfall - Quiet Area)",
+        "chance": "100%",
+        "condition": "Less than 8 kills"
+    },
+    "61": {
+        "name": "Gaster Follower A",
+        "description": "NPC talking about W. D. Gaster will appear in Hotland floor R1 near the elevator<br/>WARNING: This will set Fun value to 0",
+        "chance": "20%",
+        "condition": "Final fight must not have been completed"
+    },
+    "62": {
+        "name": "Gaster Follower B",
+        "description": "NPC talking about W. D. Gaster will appear in Hotland floor L3 near the elevator<br/>WARNING: This will set Fun value to 0",
+        "chance": "50%",
+        "condition": "Final fight must not have been completed, and you must have less than 12 kills"
+    },
+    "63": {
+        "name": "Gaster Follower C",
+        "description": "NPC talking about W. D. Gaster will appear in Hotland floor L2 near the elevator<br/>WARNING: This will set Fun value to 0",
+        "chance": "50%",
+        "condition": "Final fight must not have been completed, and you must have less than 12 kills"
+    },
+    ">90": {
+        "name": "Grey Monster Kid",
+        "description": "Grey Monster Kid will appear in room 91 (Waterfall - Boat plank)",
+        "chance": "100%",
+        "condition": "The final fight must have been completed"
+    },
+    "40-45": {
+        "name": "Phone call 1",
+        "description": "Refridgerator phone call will occur.",
+        "chance": "100%",
+        "condition": "The final fight must not have been completed.<br/>Currently uneditable value should be smaller than 120.<br/>Also, the phone call must not have occurred earlier,<br/>but that is also uneditable in this version"
+    },
+    "46-50": {
+        "name": "Phone call 2",
+        "description": "Pizza phone call will occur.",
+        "chance": "100%",
+        "condition": "The final fight must not have been completed.<br/>Currently uneditable value should be smaller than 120.<br/>The phone call must not have occurred earlier,<br/>but that is also uneditable in this version"
+    },
+    "2-39": {
+        "name": "Phone call 3",
+        "description": "Wrong number phone call will occur.",
+        "chance": "100%",
+        "condition": "The final fight must not have been completed.<br/>Currently uneditable value should be smaller than 120.<br/>The phone call must not have occurred earlier,<br/>but that is also uneditable in this version"
+    }
+}

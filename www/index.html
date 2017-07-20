@@ -3,253 +3,267 @@
     <head>
         <meta charset="utf-8" />
         <meta author="crumblingstatue <radiantstatue@gmail.com>"/>
-        <!-- ^ Original author metatadata ^ -->
         <meta name="description" content="A save editor for Undertale." />
         <meta name="keywords" content="Undertale,save,editor" />
         <title>Flowey's Time Machine</title>
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/alert.js"></script>
+        <script type="text/javascript" src="js/extensions.js"></script>
+        <script type="text/javascript" src="js/file.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
         <link rel="stylesheet" type="text/css" href="css/style.css"/>
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
     </head>
     <body>
-      <audio id="audio" src="audio/flowey.ogg" preload="auto" type="audio/ogg"></audio>
-      <header>
-        <img src="img/flowey_nice.png" alt="" id="floweyimg" />
-        <h1>Flowey's Time Machine</h1>
-      </header>
-      <ul id="nav">
-        <li><a href="#" onclick="showTab(1)">Persistent Data</a></li>
-        <li><a href="#" onclick="showTab(2)">SAVE Data</a></li>
-        <li><a href="#" onclick="showTab(3)">Save &amp; Load</a></li>
-        <li><a href="#" onclick="showTab(4)">Help</a></li>
-      </ul>
-      <div id="tabs">
-        <div id="tab-1">
-          <h2> Persistent Data </h2>
-          <p>
-              Things that Undertale remembers throughout multiple playthroughs.
-          </p>
-          <form>
-              <div>
-                  <fieldset>
-                      <legend> General </legend>
-                      <label> Name </label> <input id="ini-name" type="text" />
-                      <label> Location </label> <select id="ini-location"> </select>
-                      <label> Kills </label> <input id="ini-kills" type="text" />
-                      <label> LOVE </label> <input id="ini-love" type="text" />
-                      <label> Allow Fun Values </label> <input id="ini-fun-check" type="checkbox" />
-                      <label id="ini-fun-label"> Fun Value </label> <input id="ini-fun-value" type="text" />
-                  </fieldset>
-              </div>
-              <fieldset>
-                  <legend> Omega Flowey </legend>
-                  <label> Trapped in Flowey's World </label> <input type="checkbox" id="ini-omegaFlowey-trapped" />
-                  <label> Initiated battle </label> <input type="checkbox" id="ini-omegaFlowey-battleInit" />
-                  <label> How many times you died </label> <input type="text" id="ini-omegaFlowey-deaths" />
-              </fieldset>
-          </form>
-        </div>
-        <div id="tab-2">
-          <h2> SAVE Data </h2>
-          <p>
-              This is what gets SAVED at SAVE points.
-          </p>
-          <form>
-              <div>
-                  <fieldset>
-                  <legend>General</legend>
-                  <label>Name</label> <input type="text" id="sav-name" />
-                  <label>Location</label> <select id="sav-location"> </select>
-                  <label>Kills</label> <input type="text" id="sav-kills" />
-                  <label>??? kill count </label> <input type="text" id="sav-unkkills" />
-                  </fieldset>
-                  <fieldset>
-                      <legend>Equipment</legend>
-                      <label>Weapon</label> <select id="sav-weapon"> </select>
-                      <label>Armor</label> <select id="sav-armor"> </select>
-                  </fieldset>
-              </div>
-              <div>
-                  <fieldset>
-                  <legend>Stats</legend>
-                  <label>LOVE</label> <input type="text" id="sav-love" />
-                  <label>HP</label> <input type="text" id="sav-hp" />
-                  <label>EXP</label> <input type="text" id="sav-exp" />
-                  <label>GOLD</label> <input type="text" id="sav-gold" />
-                  <label>AT</label> <input type="text" id="sav-at" />
-                  <label>Weapon AT</label> <input type="text" id="sav-weaponat" />
-                  <label>DF</label> <input type="text" id="sav-df" />
-                  <label>Armor DF</label> <input type="text" id="sav-armordf" />
-                  </fieldset>
-              </div>
-              <div>
-              <fieldset>
-                  <legend>Inventory</legend>
-                  <label>Slot 1</label> <select id="sav-invslot-1"> </select>
-                  <label>Slot 2</label> <select id="sav-invslot-2"> </select>
-                  <label>Slot 3</label> <select id="sav-invslot-3"> </select>
-                  <label>Slot 4</label> <select id="sav-invslot-4"> </select>
-                  <label>Slot 5</label> <select id="sav-invslot-5"> </select>
-                  <label>Slot 6</label> <select id="sav-invslot-6"> </select>
-                  <label>Slot 7</label> <select id="sav-invslot-7"> </select>
-                  <label>Slot 8</label> <select id="sav-invslot-8"> </select>
-              </fieldset>
-              <fieldset>
-                  <legend> True Lab </legend>
-                  <label> Exited (can get true ending) </label> <input id="sav-exitedtruelab" type="checkbox" />
-              </fieldset>
-              </div>
-              <div>
-              <fieldset>
-                  <legend>Cellphone</legend>
-                  <label> You have cellphone </label> <input id="sav-havecell" type="checkbox" />
-                  <label>Slot 1</label> <select id="sav-cellslot-1"> </select>
-                  <label>Slot 2</label> <select id="sav-cellslot-2"> </select>
-                  <label>Slot 3</label> <select id="sav-cellslot-3"> </select>
-                  <label>Slot 4</label> <select id="sav-cellslot-4"> </select>
-                  <label>Slot 5</label> <select id="sav-cellslot-5"> </select>
-                  <label>Slot 6</label> <select id="sav-cellslot-6"> </select>
-                  <label>Slot 7</label> <select id="sav-cellslot-7"> </select>
-                  <label>Slot 8</label> <select id="sav-cellslot-8"> </select>
-              </fieldset>
-              </div>
-              <div>
-                  <fieldset>
-                      <legend> Ruins </legend>
-                      <label> Kill count </label> <input type="text" id="sav-kill-dungeon" />
-                      <label>Training Dummy State</label> <select id="sav-state-trainingdummy"> </select>
-                      <label>Toriel State</label> <select id="sav-state-toriel"> </select>
-                  </fieldset>
-                  <fieldset>
-                      <legend> Snowdin </legend>
-                      <label>Kill count</label> <input type="text" id="sav-kill-snowdin" />
-                      <label>Doggo State</label> <select id="sav-state-doggo"> </select>
-                      <label>Dogamy &amp; Dogaressa State</label> <select id="sav-state-dogamydogaressa"> </select>
-                      <label>Greater Dog State</label> <select id="sav-state-greaterdog"> </select>
-                      <label>Comedian State</label> <select id="sav-state-comedian"> </select>
-                      <label>Papyrus State</label> <select id="sav-state-papyrus"> </select>
-                  </fieldset>
-                  </div>
-                  <div>
-                  <fieldset>
-                      <legend> Waterfall </legend>
-                      <label>Kill count</label> <input type="text" id="sav-kill-waterfall" />
-                      <label>Shyren State</label> <select id="sav-state-shyren"> </select>
-                      <label>Mad Dummy State</label> <select id="sav-state-maddummy"> </select>
-                      <label>Undyne State 1</label> <select id="sav-state-undyne1"> </select>
-                      <label>Undyne State 2</label> <select id="sav-state-undyne2"> </select>
-                  </fieldset>
-                  <fieldset>
-                      <legend> Hotland </legend>
-                      <label>Kill count</label> <input type="text" id="sav-kill-hotland" />
-                      <label>Bro Guards State</label> <select id="sav-state-broguards"> </select>
-                      <label>Muffet State</label> <select id="sav-state-muffet"> </select>
-                      <label>Mettaton State</label> <select id="sav-state-mettaton"> </select>
-                  </fieldset>
-              </div>
-          </form>
-        </div>
-        <div id="tab-3">
-          <h2> Save &amp; Load </h2>
-          <p>
-              You can load common settings for save files here. <br/>
-              You can also save your own presets for later use.
-          </p>
-          <form>
-            <div>
-              <fieldset>
-                <legend> Built-in Presets </legend>
-                <select id="preset-builtin-select"> </select>
-                <input type="button" id="preset-builtin-load" value="Load" />
-              </fieldset>
+        <div id="alerts"></div>
+        <audio id="audio" src="audio/flowey.ogg" preload="auto" type="audio/ogg"></audio>
+        <header>
+            <img src="img/flowey_nice.png" id="floweyimg" />
+            <h1 id="vocab-title"></h1>
+            <div id="language-container">
+                <select id="language-select"></select>
+                <input type="button" id="language-button"></input>
             </div>
-            <div>
-              <fieldset>
-                <legend> Your Presets </legend>
-                <select id="preset-user-select"> </select>
-                <input type="button" id="preset-user-load" value="Load" disabled />
-                <input type="button" id="preset-user-save" value="Save" disabled />
-                <input type="button" id="preset-user-new" value="New" />
-                <input type="button" id="preset-user-delete" value="Delete" disabled />
-              </fieldset>
+        </header>
+        <ul id="nav">
+            <li><a onclick="showTab(1)">Persistent Data</a></li>
+            <li><a onclick="showTab(2)">SAVE Data</a></li>
+            <li><a onclick="showTab(3)">Save &amp; Load</a></li>
+            <li><a onclick="showTab(4)">Help</a></li>
+        </ul>
+        <div id="tabs">
+            <div id="tab-1">
+                <h2> Persistent Data </h2>
+                <p> Things that Undertale remembers throughout multiple playthroughs. </p>
+                <form>
+                    <div>
+                        <fieldset>
+                            <legend> General </legend>
+                            <label> Name </label> <input id="ini-name" type="text" />
+                            <label> Location </label> <select id="ini-location"> </select>
+                            <label> Kills </label> <input id="ini-kills" type="text" />
+                            <label> LOVE </label> <input id="ini-love" type="text" />
+                        </fieldset>
+                    </div>
+                    <fieldset>
+                        <legend> Omega Flowey </legend>
+                        <label> Trapped in Flowey's World </label> <input type="checkbox" id="ini-omegaFlowey-trapped" />
+                        <label> Initiated battle </label> <input type="checkbox" id="ini-omegaFlowey-battleInit" />
+                        <label> How many times you died </label> <input type="text" id="ini-omegaFlowey-deaths" />
+                    </fieldset>
+                    <div>
+                        <fieldset>
+                            <legend> Fun Values </legend>
+                            <label> Allow Fun Values </label> <input id="ini-fun-check" type="checkbox" />
+                            <div id="ini-fun-show">
+                                <label> Fun Value </label> <input id="ini-fun-value" type="text" />
+                                <label> Select </label> <select id="ini-fun-select"> </select><br/>
+                                <label> Description: </label> <label id="ini-fun-description"> </label><br/>
+                                <label> Chance: </label> <label id="ini-fun-chance"> </label><br/>
+                                <label> Other conditions: </label> <label id="ini-fun-condition"> </label>
+                            </div>
+                        </fieldset>
+                    </div>
+                </form>
             </div>
-            <fieldset>
-                <legend> Post-Genocide </legend>
-                <label> system_information_962 <sup title="When this file is present, the world is in the 'deleted' state that is triggered when you complete a genocide run.">[?]</sup> </label>
-                    <input type="button" id="si-save-2" value="Save" />
-                    <input type="button" id="si-delete-2" value="Delete" />
-                <label> system_information_963 <sup title="When this file is present, you have 'sold' your soul to get the world back after a genocide run.">[?]</sup> </label>
-                    <input type="button" id="si-save-3" value="Save" />
-                    <input type="button" id="si-delete-3" value="Delete" />
-            </fieldset>
-            <div>
-              <fieldset>
-                <legend> Default INI </legend>
-                <input id="default-save-ini" type="button" value="Save"/>
-                <input id="default-load-ini" type="button" value="Load"/>
-              </fieldset>
-              <fieldset>
-                <legend> Default SAVE </legend>
-                <input id="default-save-sav" type="button" value="Save"/>
-                <input id="default-load-sav" type="button" value="Load"/>
-              </fieldset>
+            <div id="tab-2">
+                <h2> SAVE Data </h2>
+                <p> This is what gets SAVED at SAVE points. </p>
+                <form>
+                    <div>
+                        <fieldset>
+                            <legend>General</legend>
+                            <label>Name</label> <input type="text" id="sav-name"></input>
+                            <label>Location</label> <select id="sav-location"> </select>
+                            <label>Kills</label> <input type="text" id="sav-kills"></input>
+                            <label>??? kill count</label> <input type="text" id="sav-unkkills"></input>
+                        </fieldset>
+                        <fieldset>
+                            <legend>Equipment</legend>
+                            <label>Weapon</label> <select id="sav-weapon"> </select>
+                            <label>Armor</label> <select id="sav-armor"> </select>
+                        </fieldset>
+                        <fieldset>
+                            <legend> Plot Value</legend>
+                            <label> Plot Value</label> <input id="sav-plot-value" type="text"></input>
+                            <label> Select </label> <select id="sav-plot-select"></select>
+                            <label> Description: </label> <label id="sav-plot-description"></label>
+                        </fieldset>
+                    </div>
+                    <div>
+                        <fieldset>
+                            <legend>Stats</legend>
+                            <label>LOVE</label> <input type="text" id="sav-love" />
+                            <label>HP</label> <input type="text" id="sav-hp" />
+                            <label>EXP</label> <input type="text" id="sav-exp" />
+                            <label>GOLD</label> <input type="text" id="sav-gold" />
+                            <label>AT</label> <input type="text" id="sav-at" />
+                            <label>Weapon AT</label> <input type="text" id="sav-weaponat" />
+                            <label>DF</label> <input type="text" id="sav-df" />
+                            <label>Armor DF</label> <input type="text" id="sav-armordf" />
+                        </fieldset>
+                    </div>
+                    <div>
+                        <fieldset>
+                            <legend>Inventory</legend>
+                            <label>Slot 1</label> <select id="sav-invslot-1"> </select>
+                            <label>Slot 2</label> <select id="sav-invslot-2"> </select>
+                            <label>Slot 3</label> <select id="sav-invslot-3"> </select>
+                            <label>Slot 4</label> <select id="sav-invslot-4"> </select>
+                            <label>Slot 5</label> <select id="sav-invslot-5"> </select>
+                            <label>Slot 6</label> <select id="sav-invslot-6"> </select>
+                            <label>Slot 7</label> <select id="sav-invslot-7"> </select>
+                            <label>Slot 8</label> <select id="sav-invslot-8"> </select>
+                        </fieldset>
+                        <fieldset>
+                            <legend> True Lab </legend>
+                            <label> Exited (can get true ending) </label> <input id="sav-exitedtruelab" type="checkbox" />
+                        </fieldset>
+                    </div>
+                    <div>
+                        <fieldset>
+                            <legend>Cellphone</legend>
+                            <label> You have cellphone </label> <input id="sav-havecell" type="checkbox" />
+                            <label>Slot 1</label> <select id="sav-cellslot-1"> </select>
+                            <label>Slot 2</label> <select id="sav-cellslot-2"> </select>
+                            <label>Slot 3</label> <select id="sav-cellslot-3"> </select>
+                            <label>Slot 4</label> <select id="sav-cellslot-4"> </select>
+                            <label>Slot 5</label> <select id="sav-cellslot-5"> </select>
+                            <label>Slot 6</label> <select id="sav-cellslot-6"> </select>
+                            <label>Slot 7</label> <select id="sav-cellslot-7"> </select>
+                            <label>Slot 8</label> <select id="sav-cellslot-8"> </select>
+                        </fieldset>
+                    </div>
+                    <div>
+                        <fieldset>
+                            <legend> Ruins </legend>
+                            <label> Kill count </label> <input type="text" id="sav-kill-dungeon" />
+                            <label>Training Dummy State</label> <select id="sav-state-trainingdummy"> </select>
+                            <label>Toriel State</label> <select id="sav-state-toriel"> </select>
+                        </fieldset>
+                        <fieldset>
+                            <legend> Snowdin </legend>
+                            <label>Kill count</label> <input type="text" id="sav-kill-snowdin" />
+                            <label>Doggo State</label> <select id="sav-state-doggo"> </select>
+                            <label>Dogamy &amp; Dogaressa State</label> <select id="sav-state-dogamydogaressa"> </select>
+                            <label>Greater Dog State</label> <select id="sav-state-greaterdog"> </select>
+                            <label>Comedian State</label> <select id="sav-state-comedian"> </select>
+                            <label>Papyrus State</label> <select id="sav-state-papyrus"> </select>
+                        </fieldset>
+                    </div>
+                    <div>
+                        <fieldset>
+                            <legend> Waterfall </legend>
+                            <label>Kill count</label> <input type="text" id="sav-kill-waterfall" />
+                            <label>Shyren State</label> <select id="sav-state-shyren"> </select>
+                            <label>Mad Dummy State</label> <select id="sav-state-maddummy"> </select>
+                            <label>Undyne State 1</label> <select id="sav-state-undyne1"> </select>
+                            <label>Undyne State 2</label> <select id="sav-state-undyne2"> </select>
+                        </fieldset>
+                        <fieldset>
+                            <legend> Hotland </legend>
+                            <label>Kill count</label> <input type="text" id="sav-kill-hotland" />
+                            <label>Bro Guards State</label> <select id="sav-state-broguards"> </select>
+                            <label>Muffet State</label> <select id="sav-state-muffet"> </select>
+                            <label>Mettaton State</label> <select id="sav-state-mettaton"> </select>
+                        </fieldset>
+                    </div>
+                </form>
             </div>
-          </form>
-        </div>
-        <div id="tab-4">
-            <h1> Help </h1>
-            <h2> Loading </h2>
-            <p>
-                When you open the app, you should see data from your last game.<br/>
-                If you want to load your preset, go to  "Save &amp; Load" -> "User Presets" -> "Load",<br/>
-                and if you want to reload your data from game use "Save &amp; Load" -> "Default INI/SAVE" -> "Load"
-            </p>
-            <h2> Editing </h2>
-            <p>
-                Just edit the various fields to your liking in sections "Persistent data" &amp; "SAVE data".<br/>
-                Some fields have a [?] next to them, you can hover over that with the mouse to get some information about the field.
-            </p>
-            <h2> Saving </h2>
-            <p>
-                Once you have edited the data to your liking, you can save it to your game data using "Save &amp; Load" -> "Default SAVE/INI" -> "Save"<br/>
-                or you can save it as a preset in "Save &amp; Load" -> "User Presets" -> "Save"
-            </p>
-            <h2> Additional features </h2>
-            <p>
-                If you erased your world, game generated a file named <code>system_information_962</code>.<br/>
-                Also, if you sold your soul, you should also see a file called <code>system_information_963</code>.<br/>
-                In Save &amp; Load tab you should find two sections for generating and deleting those files.
-            </p>
-            <p>
-                If you are using the Steam version of the game, these files might be backed up and restored by the game on startup. <br/>
-                In that case, you should delete the Steam data for UNDERTALE in addition to the system_information_96X files, but I have no information on how to do this.
-            </p>
-            <h2> Manual Data Restore </h2>
-            <p>
-                If you received a message from the program that you should manually backup your data, here is what happened and what ou should do :<br/>
-                Saving system is saving directly into your file system, unlike the web version, and that means bigger chances of your game data being corrupted.<br/>
-                That's why our saving system backups your game data before saving it, significantly lowering the chance of data corruption.<br/>
-                What really happens when saving of the file is requested is this :<br/>
-                System tries to backup your data <ul>
-                <li> If it fails, your data won't be saved, and you'll be alerted </li>
-                    <li> If it's successful, system starts saving <ul>
-                        <li> If saving is successful, system alerts you that saving is successful </li>
-                        <li> If saving failed, system tries to restore your backup <ul>
-                            <li> If it is successful, system alerts you that saving wasn't possible, but you data is safe </li>
-                            <li> If it failed, system will alert you need to manually backup your data, and redirects you here </li>
+            <div id="tab-3">
+                <h2> Save &amp; Load </h2>
+                <p>
+                    You can load common settings for save files here. <br/>
+                    You can also save your own presets for later use.
+                </p>
+                <form>
+                    <div>
+                        <fieldset>
+                            <legend> Presets </legend>
+                            <select id="preset-select"> </select>
+                            <input type="button" id="preset-load" value="Load" disabled></input>
+                            <input type="button" id="preset-save" value="Save" disabled></input>
+                            <input type="button" id="preset-new" value="New"></input>
+                            <input type="button" id="preset-reset" value="Reset"></input>
+                            <input type="button" id="preset-delete" value="Delete" disabled></input>
+                        </fieldset>
+                    </div>
+                    <fieldset>
+                        <legend> Post-Genocide </legend>
+                        <label> system_information_962 <sup title="When this file is present, the world is in the 'deleted' state that is triggered when you complete a genocide run.">[?]</sup> </label>
+                        <input type="button" id="si-save-2" value="Save" />
+                        <input type="button" id="si-delete-2" value="Delete" />
+                        <label> system_information_963 <sup title="When this file is present, you have 'sold' your soul to get the world back after a genocide run.">[?]</sup> </label>
+                        <input type="button" id="si-save-3" value="Save" />
+                        <input type="button" id="si-delete-3" value="Delete" />
+                    </fieldset>
+                    <div>
+                        <fieldset>
+                            <legend> Default INI </legend>
+                            <input id="default-save-ini" type="button" value="Save"/>
+                            <input id="default-load-ini" type="button" value="Load"/>
+                        </fieldset>
+                        <fieldset>
+                            <legend> Default SAVE </legend>
+                            <input id="default-save-sav" type="button" value="Save"/>
+                            <input id="default-load-sav" type="button" value="Load"/>
+                        </fieldset>
+                    </div>
+                </form>
+            </div>
+            <div id="tab-4">
+                <h1> Help </h1>
+                <h2> Loading </h2>
+                <p>
+                    When you open the app, you should see data from your last game.<br/>
+                    If you want to load your preset, go to  "Save &amp; Load" -> "User Presets" -> "Load",<br/>
+                    and if you want to reload your data from game use "Save &amp; Load" -> "Default INI/SAVE" -> "Load"
+                </p>
+                <h2> Editing </h2>
+                <p>
+                    Just edit the various fields to your liking in sections "Persistent data" &amp; "SAVE data".<br/>
+                    Some fields have a [?] next to them, you can hover over that with the mouse to get some information about the field.
+                </p>
+                <h2> Saving </h2>
+                <p>
+                    Once you have edited the data to your liking, you can save it to your game data using "Save &amp; Load" -> "Default SAVE/INI" -> "Save"<br/>
+                    or you can save it as a preset in "Save &amp; Load" -> "User Presets" -> "Save"
+                </p>
+                <h2> Additional features </h2>
+                <p>
+                    If you erased your world, game generated a file named <code>system_information_962</code>.<br/>
+                    Also, if you sold your soul, you should also see a file called <code>system_information_963</code>.<br/>
+                    In Save &amp; Load tab you should find two sections for generating and deleting those files.
+                </p>
+                <p>
+                    If you are using the Steam version of the game, these files might be backed up and restored by the game on startup. <br/>
+                    In that case, you should delete the Steam data for UNDERTALE in addition to the system_information_96X files, but I have no information on how to do this.
+                </p>
+                <h2> Manual Data Restore </h2>
+                <p>
+                    If you received a message from the program that you should manually backup your data, here is what happened and what ou should do :<br/>
+                    Saving system is saving directly into your file system, unlike the web version, and that means bigger chances of your game data being corrupted.<br/>
+                    That's why our saving system backups your game data before saving it, significantly lowering the chance of data corruption.<br/>
+                    What really happens when saving of the file is requested is this :<br/>
+                    System tries to backup your data <ul>
+                    <li> If it fails, your data won't be saved, and you'll be alerted </li>
+                        <li> If it's successful, system starts saving <ul>
+                            <li> If saving is successful, system alerts you that saving is successful </li>
+                            <li> If saving failed, system tries to restore your backup <ul>
+                                <li> If it is successful, system alerts you that saving wasn't possible, but you data is safe </li>
+                                <li> If it failed, system will alert you need to manually backup your data, and redirects you here </li>
+                            </ul></li>
                         </ul></li>
-                    </ul></li>
-                </ul>
-                What should you do in case when you need to manually backup your data: <ul>
-                    <li> Click (Windows Button) + R on your keyboard </li>
-                    <li> Enter %LOCALAPPDATA%/UNDERTALE </li>
-                    <li> You'll see files <code>undertale.ini.bak</code> (in case you were saving the INI) or <code>file0.bak</code> (in case your were saving the SAVE) </li>
-                    <li> You may also see files <code>undertale.ini</code> and <code>file0</code>, if you do, delete those files as they are most likely corrupted </li>
-                    <li> Rename <code>undertale.ini.bak</code> (or <code>file0.bak</code>) to <code>undertale.ini</code> (or <code>file0</code>) </li>
-                    <li> Test in-game if it works </li>
-                </ul>
-            </p>
+                    </ul>
+                    What should you do in case when you need to manually backup your data: <ul>
+                        <li> Click (Windows Button) + R on your keyboard </li>
+                        <li> Enter %LOCALAPPDATA%/UNDERTALE </li>
+                        <li> You'll see files <code>undertale.ini.bak</code> (in case you were saving the INI) or <code>file0.bak</code> (in case your were saving the SAVE) </li>
+                        <li> You may also see files <code>undertale.ini</code> and <code>file0</code>, if you do, delete those files as they are most likely corrupted </li>
+                        <li> Rename <code>undertale.ini.bak</code> (or <code>file0.bak</code>) to <code>undertale.ini</code> (or <code>file0</code>) </li>
+                        <li> Test in-game if it works </li>
+                    </ul>
+                </p>
+            </div>
         </div>
-      </div>
     </body>
 </html>

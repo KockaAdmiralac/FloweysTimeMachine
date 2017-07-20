@@ -1,0 +1,35 @@
+{
+    "error": {
+        "occurred": "Десила се грешка током",
+        "loading_data_file": "читања фајла с подацима",
+        "loading_ini_file": "читања INI фајла",
+        "loading_save_file": "читања SAVE фајла",
+        "loading_files_file": "читања фајла с подацима о фајловима",
+        "writing_file": "писања у фајл",
+        "reading_file": "читања из фајла",
+        "saving_file": "чувања фајла",
+        "fatal": "ФАТАЛНА ГРЕШКА!",
+        "backup": "Резервно копирање фајла неуспешно!",
+        "assignement": "Додељивање ван секције",
+        "ini": "Грешка приликом парсирања INI фајла",
+        "expected_equal": "Очекивано '='",
+        "expected_quote": "Очекивано '\"'",
+        "unterminated": "Непрекинута ниска вредности",
+        "unknown_value": "Непозната вредност %1 за линију %2 (%3). Ако мислите да је ово валидна вредност, пријавите на https://github.com/crumblingstatue/FloweysTimeMachine/issues",
+        "delete_system_information": "брисања system information фајла",
+        "preset_not_created": "Нисте унели валидну вредност, поставка није сачувана.",
+        "enter_valid_preset": "Морате унети валидну поставку прво!"
+    },
+    "success": {
+        "system_information_created": "System information фајл направљен!",
+        "system_information_deleted": "System information фајл обрисан!"
+    },
+    "not_available": "N/A",
+    "data_safe": "Не брините се, ваши подаци су сачувани :)",
+    "manual_restore": "Погледајте у секцији за помоћ како да ручно вратите своје податке.",
+    "file_not_saved": "Фајл неће бити сачуван!",
+    "enter_preset_name": "Унесите име за нову поставку",
+    "affect_game": "Ово ће имати ефекта на игру. Наставити?",
+    "restore_presets": "Ово ће вратити поставке на подразумевано и све корисничке поставке ће бити обрисане. Наставити?",
+    "refresh_vocab": "Језик ће бити промењен након првог рестартовања апликације."
+}

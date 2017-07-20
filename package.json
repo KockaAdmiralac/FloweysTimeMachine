@@ -6,6 +6,7 @@
         "toolbar": false,
         "width": 816,
         "height": 624,
-        "icon": "www/icon/icon.png"
+        "icon": "www/icon/icon.png",
+		"fullscreen": true
     }
 }

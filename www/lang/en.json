@@ -1,0 +1,44 @@
+{
+    "error": {
+        "occurred": "An error occurred while",
+        "loading_data_file": "loading data file",
+        "loading_ini_file": "loading INI file",
+        "loading_save_file": "loading SAVE file",
+        "loading_files_file": "loading files file",
+        "writing_file": "writing to file",
+        "reading_file": "reading from file",
+        "saving_file": "saving file",
+        "fatal": "FATAL ERROR OCCURRED!",
+        "backup": "Backuping data failed!",
+        "static_class": "This is a static class.",
+        "assignement": "Assignment outside of a section",
+        "ini": "INI parse error",
+        "expected_equal": "Expected '='",
+        "expected_quote": "Expected '\"'",
+        "unterminated": "Unterminated value string",
+        "unknown_value": "Unknown value %1 for line %2 (%3). If you think this is a valid value, report an issue at https://github.com/crumblingstatue/FloweysTimeMachine/issues",
+        "delete_system_information": "deleting system information file",
+        "preset_not_created": "You did not enter a valid name, preset not created.",
+        "enter_valid_preset": "You need to select a valid preset first!"
+    },
+    "success": {
+        "system_information_created": "System information file created!",
+        "system_information_deleted": "System information file deleted!"
+    },
+    "document": {
+        "inner": {
+            "title": "Flowey's Time Machine"
+        },
+        "value": {
+            "language-button": "Change language"
+        }
+    },
+    "not_available": "N/A",
+    "data_safe": "Don't worry, your data is safe :)",
+    "manual_restore": "Look at help on help how to manually restore your backup.",
+    "file_not_saved": "File won't be saved!",
+    "enter_preset_name": "Enter the name for your new preset",
+    "affect_game": "This will affect your game. Continue?",
+    "restore_presets": "This will restore presets to default and all user-defined preset will be deleted. Continue?",
+    "refresh_vocab": "Language will be changed upon next starting the application."
+}

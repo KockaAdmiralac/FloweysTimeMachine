@@ -19,120 +19,25 @@ window.onerror = function(error, file, line, column)
 /**
  * Local variables
  */
-var currLoading = 0, cellOpts, weapons, armors, rooms, items, states, ini,
-saveLines, presets, currTab, fs = nw.require('fs'), dataLoaded,
-undertaleDir = nw.process.env.LOCALAPPDATA.replace(/\\/g, "/") + "/UNDERTALE/";
+var $data = {},
+$vocab,
+currLoading = 0,
+ini,
+maxFun,
+saveLines,
+currTab,
+dataLoaded,
+id,
+cacheDir = nw.process.env.APPDATA.replace(/\\/g, "/") + "/FloweysTimeMachine/",
+undertaleDir = nw.process.env.LOCALAPPDATA.replace(/\\/g, "/") + "/UNDERTALE/",
+FILES_FILE = "Files",
+FLOWEY_FILE = "/www/img/flowey_evil.png",
+FLOWEY_WINK = "/www/img/flowey_wink.png",
+INI_FILE = "undertale.ini",
+SAVE_FILE = "file0",
+SYSTEM_INFORMATION_FILE = "system_information_96";
 
-/**
- * Used for loading files.
- * @method
- * @param {string} file - Path to file to load.
- * @param {function} callback - Function that will be called after loading completed.
- * @author KockaAdmiralac
- */
-function loadFile(file, callback)
-{
-    "use strict";
-    var req = new XMLHttpRequest();
-    req.error = function() { alert("Error happened while loading file!"); };
-    req.onreadystatechange = function() { if(req.readyState === 4) callback.call(window, req.response); };
-    req.open("GET", file, true);
-    req.send();
-}
-
-/**
- * Saves file to specified place.
- * @method
- * @param {String} file - Path where to save the file.
- * @param {String} text - Text to write in the file.
- * @param {function} callback - Function that will be called upon file saving.
- * @returns {Boolean} If file saving was successful
- */
-function saveFile(file, text, callback)
-{
-    "use strict";
-    try
-    {
-        fs.writeFile(file, text, function(err) { if(!err) callback.call(window); });
-        return true;
-    }
-    catch(e)
-    {
-        alert("Error happened while writing to file!");
-        return false;
-    }
-}
-
-/**
- * Copies one file from one location to another
- * @method
- * @param {String} source - Path to file that should be copied
- * @param {String} dest - Path to where file should be copied
- * @param {function} callback - Function that will be called upon copying.
- * @param {function} err - Function that will be called upon error happening.
- * @author KockaAdmiralac
- */
-function copyFile(source, dest, callback, err)
-{
-    "use strict";
-    var read = fs.createReadStream(source);
-    var write = fs.createWriteStream(dest);
-    read.on("error", function()
-    {
-        alert("Error while reading file.");
-        err.call(this);
-    });
-    write.on("error", function()
-    {
-        alert("Error while writing to file.");
-        err.call(this);
-    });
-    write.on("close", function(){ callback.call(this); });
-    read.pipe(write);
-}
-
-/**
- * Saves data safely.
- * @method
- * @param {String} filename - Path to file
- * @param {String} string - Data to save to the file.
- * @author KockaAdmiralac
- */
-function secureDataSave(filename, string)
-{
-    "use strict";
-    copyFile(filename, filename + ".bak", // Backups the file before saving...
-    function()
-    {
-        if(!saveFile(filename, string, function(){}))
-        {
-            // If save is unsuccessful, restore backup
-            fs.unlink(filename);
-            copyFile(filename, filename + ".bak",
-            function() { alert("Error while saving INI file!\nDon't worry, your data is safe :)"); },
-            function() { alert("FATAL ERROR OCCURRED!\nLook at help on help how to manually restore your backup."); });
-        }
-    },
-    function() { alert("Backuping data failed! File won't be saved."); });
-}
-
-/**
- * Used for loading data files.
- * @method
- * @param {string} file - Path to file to load.
- * @param {string} obj - Variable in which data will be stored after loading.
- * @author KockaAdmiralac
- */
-function loadJSONFile(file, obj)
-{
-    "use strict";
-    ++ currLoading;
-    loadFile("/www/data/" + file + ".json", function(json)
-    {
-        this[obj] = JSON.parse(json);
-        if(-- currLoading === 0) onLoaded();
-    });
-}
+function error(text) { return $vocab.error.occurred + " " + $vocab.error[text] + "."; }
 
 /**
  * Parses INI text into object.
@@ -144,15 +49,11 @@ function loadJSONFile(file, obj)
 function parseIniFromText(text)
 {
     "use strict";
-    var lines = text.match(/[^\r\n]+/g);
-    var section = null;
-    var tmpini = {};
+    var lines = text.match(/[^\r\n]+/g), section = null, tmpini = {};
     lines.forEach(function(line)
     {
-        // Ignore empty lines
-        if (line === "") return;
-        // If line starts with [, it is a section header
-        var lbracket = line.indexOf("[");
+        if (line === "") return;            // Ignore empty lines
+        var lbracket = line.indexOf("[");   // If line starts with [, it is a section header
         if (lbracket !== -1)
         {
             var rbracket = line.slice(lbracket).indexOf("]") + lbracket;
@@ -162,18 +63,33 @@ function parseIniFromText(text)
                 tmpini[section] = {};
             }
         }
-        // Otherwise, it is assumed to be an assignment
         else
         {
-            if (section === null) throw "Assignment outside of a section";
+            // Otherwise, it is assumed to be an assignment
+            if (section === null)
+            {
+                Alert.error($vocab.error.ini + ": " + $vocab.error.assignment);
+                return {};
+            }
             var eq = line.indexOf("=");
-            if (eq === -1) throw "Expected '='";
+            if (eq === -1)
+            {
+                Alert.error($vocab.error.ini + ": " + $vocab.error.expected_equal);
+                return {};
+            }
             var lquot = line.indexOf('"');
-            if (lquot === -1) throw "Expected '\"'";
+            if (lquot === -1)
+            {
+                Alert.error($vocab.error.ini + ": " + $vocab.error.expected_quote);
+                return {};
+            }
             var rquot = line.slice(lquot + 1).indexOf('"') + lquot + 1;
-            if (rquot === -1) throw "Unterminated value string";
-            var value = line.slice(lquot + 1, rquot);
-            var key = line.slice(0, eq);
+            if (rquot === -1)
+            {
+                Alert.error($vocab.error.ini + ": " + $vocab.error.unterminated);
+                return {};
+            }
+            var value = line.slice(lquot + 1, rquot), key = line.slice(0, eq);
             tmpini[section][key] = value;
         }
     });
@@ -188,16 +104,16 @@ function parseIniFromText(text)
 function floweyLaughOnce()
 {
     "use strict";
-    id.floweyimg.src = "/www/img/flowey_evil.png";
+    id.floweyimg.src = FLOWEY_FILE;
     id.audio.play();
 }
 
 /**
- * Inserts items from array to dropdown box.
+ * Inserts $data.Items from array to dropdown box.
  * @method
  * @param {String} node - iD of HTML element where to insert elements
  * @param {Number} i - Initial value
- * @param {Array} array - Array of items to insert
+ * @param {Array} array - Array of $data.Items to insert
  * @author crumblingstatue
  * @todo Optimizations...
  */
@@ -212,37 +128,37 @@ function insert(node, i, array)
 }
 
 /**
- * Inserts data about items in dropdown boxes.
+ * Inserts data about $data.Items in dropdown boxes.
  * @method
  * @author crumblingstatue
  */
 function insertInvLists()
 {
     "use strict";
-    for (var i = 0; i < items.length; ++i)
+    for (var i = 0; i < $data.Items.length; ++i)
     {
-        for (var j = 1; j <= 8; ++j) insert(id.sav.invslot[j], i, items);
-        insert(id.sav.weapon, i, items);
-        insert(id.sav.armor, i, items);
+        for (var j = 1; j <= 8; ++j) insert(id.sav.invslot[j], i, $data.Items);
+        insert(id.sav.weapon, i, $data.Items);
+        insert(id.sav.armor, i, $data.Items);
     }
 }
 
 /**
- * Method used for inserting inventory items from array.
+ * Method used for inserting inventory $data.Items from array.
  * @method
  * @author crumblingstatue
  */
 function insertCellLists()
 {
     "use strict";
-    for (var i = 1; i <= 8; i++) loadSelectFromObj(id.sav.cellslot[i], cellOpts);
+    for (var i = 1; i <= 8; i++) loadSelectFromObj(id.sav.cellslot[i], $data.Cell);
 }
 
 /**
  * Inserts object elements into dropdown box.
  * @method
- * @param {String} selectId - iD of HTML element in which to insert items.
- * @param {Object} obj - Object from which to insert items.
+ * @param {String} selectId - iD of HTML element in which to insert $data.Items.
+ * @param {Object} obj - Object from which to insert $data.Items.
  * @author crumblingstatue
  */
 function loadSelectFromObj(selectId, obj)
@@ -259,14 +175,10 @@ function loadSelectFromObj(selectId, obj)
 function updatePersistentDataForm()
 {
     "use strict";
-    var hasFun = ini.General.Fun !== undefined;
     id.ini.name.value = ini.General.Name;
     id.ini.location.value = parseInt(ini.General.Room.trim());
     id.ini.kills.value = parseInt(ini.General.Kills.trim());
     id.ini.love.value = parseInt(ini.General.Love.trim());
-    id.ini.fun.checked = hasFun;
-    id.ini.fun.value.value = parseInt(ini.General[hasFun ? "Fun" : "fun"]);
-    updateFunForm();
     if (ini.FFFFF)
     {
         if (ini.FFFFF.F) id.ini.omegaFlowey.trapped.checked = (parseInt(ini.FFFFF.F.trim()) === 1);
@@ -332,7 +244,7 @@ function updateSelection(id, values, index, list)
     "use strict";
     var value = parseInt(values[index].trim());
     if (list[value]) id.value = value;
-    else window.alert("Unknown value '" + value + "' for line " + (index + 1) + " (" + id + ").\n" + "If you think this is a valid value, report an issue at https://github.com/crumblingstatue/FloweysTimeMachine/issues");
+    else Alert.error($vocab.error.unknown_value.format(value, index + 1, id));
 }
 
 /**
@@ -356,25 +268,25 @@ function updateSaveDataForm()
     id.sav.gold.value       = values[10];
     for (var i = 0; i < 8; i++)
     {
-        updateSelection(id.sav.invslot[i + 1], values, 12 + (i * 2), window.items);
-        updateSelection(id.sav.cellslot[i + 1], values, 13 + (i * 2), window.cellOpts);
+        updateSelection(id.sav.invslot[i + 1], values, 12 + (i * 2), window.$data.Items);
+        updateSelection(id.sav.cellslot[i + 1], values, 13 + (i * 2), $data.Cell);
     }
-    updateSelection(id.sav.weapon, values, 28, window.items);
-    updateSelection(id.sav.armor, values, 29, window.items);
-    updateSelection(id.sav.state.trainingdummy, values, 44, window.states.trainingDummy);
-    updateSelection(id.sav.state.toriel, values, 75, window.states.toriel);
-    updateSelection(id.sav.state.doggo, values, 82, window.states.doggo);
-    updateSelection(id.sav.state.dogamydogaressa, values, 83, window.states.dogamyDogaressa);
-    updateSelection(id.sav.state.greaterdog, values, 84, window.states.greaterDog);
-    updateSelection(id.sav.state.comedian, values, 87, window.states.comedian);
-    updateSelection(id.sav.state.papyrus, values, 97, window.states.papyrus);
-    updateSelection(id.sav.state.shyren, values, 111, window.states.shyren);
-    updateSelection(id.sav.state.undyne1, values, 281, window.states.undyne1);
-    updateSelection(id.sav.state.maddummy, values, 282, window.states.madDummy);
-    updateSelection(id.sav.state.undyne2, values, 380, window.states.undyne2);
-    updateSelection(id.sav.state.muffet, values, 427, window.states.muffet);
-    updateSelection(id.sav.state.broguards, values, 432, window.states.broGuards);
-    updateSelection(id.sav.state.mettaton, values, 455, window.states.mettaton);
+    updateSelection(id.sav.weapon, values, 28, window.$data.Items);
+    updateSelection(id.sav.armor, values, 29, window.$data.Items);
+    updateSelection(id.sav.state.trainingdummy, values, 44, window.$data.States.trainingDummy);
+    updateSelection(id.sav.state.toriel, values, 75, window.$data.States.toriel);
+    updateSelection(id.sav.state.doggo, values, 82, window.$data.States.doggo);
+    updateSelection(id.sav.state.dogamydogaressa, values, 83, window.$data.States.dogamyDogaressa);
+    updateSelection(id.sav.state.greaterdog, values, 84, window.$data.States.greaterDog);
+    updateSelection(id.sav.state.comedian, values, 87, window.$data.States.comedian);
+    updateSelection(id.sav.state.papyrus, values, 97, window.$data.States.papyrus);
+    updateSelection(id.sav.state.shyren, values, 111, window.$data.States.shyren);
+    updateSelection(id.sav.state.undyne1, values, 281, window.$data.States.undyne1);
+    updateSelection(id.sav.state.maddummy, values, 282, window.$data.States.madDummy);
+    updateSelection(id.sav.state.undyne2, values, 380, window.$data.States.undyne2);
+    updateSelection(id.sav.state.muffet, values, 427, window.$data.States.muffet);
+    updateSelection(id.sav.state.broguards, values, 432, window.$data.States.broGuards);
+    updateSelection(id.sav.state.mettaton, values, 455, window.$data.States.mettaton);
     id.sav.unkkills.value = values[231];
     id.sav.kill.dungeon.value = values[232];
     id.sav.kill.snowdin.value = values[233];
@@ -407,7 +319,7 @@ function updateSaveValuesFromForm()
     for(var i = 0; i < 8; ++i)
     {
         saveLines[12 + i * 2] = id.sav.invslot[i + 1].value;
-        saveLines[12 + i * 2 + 1] = id.sav.cellslot[i + 1].value
+        saveLines[12 + i * 2 + 1] = id.sav.cellslot[i + 1].value;
     }
     saveLines[28] = id.sav.weapon.value;
     saveLines[29] = id.sav.armor.value;
@@ -432,15 +344,67 @@ function updateSaveValuesFromForm()
     saveLines[432] = id.sav.state.broguards.value;
     saveLines[455] = id.sav.state.mettaton.value;
     saveLines[523] = id.sav.exitedtruelab.checked ? "12" : "0";
+    saveLines[542] = id.sav.plot.value.value;
     saveLines[545] = id.sav.havecell.checked ? "1" : "0";
     saveLines[547] = id.sav.location.value;
 }
 
 function updateFunForm()
 {
-    var checked = id.ini.fun.check.checked;
-    id.ini.fun.value.style.display = checked ? "block" : "none";
-    id.ini.fun.label.style.display = checked ? "block" : "none";
+    updateFunFormDisplay();
+    updateFunFormContentFromSelect();
+}
+
+function updateFunFormDisplay(checked)
+{
+    "use strict";
+    id.ini.fun.show.style.display = id.ini.fun.check.checked ? "block" : "none";
+}
+
+function updateFunFormContent()
+{
+    var funForm = id.ini.fun.value.value;
+    var value = $data.Fun[funForm > maxFun ? maxFun : funForm];
+    ["description", "chance", "condition"].forEach(function(el){ id.ini.fun[el].innerHTML = value ? value[el] : $vocab.not_available; });
+}
+
+function updateFunFormContentFromSelect()
+{
+    "use strict";
+    if(id.ini.fun.check.checked)
+    {
+        var value = id.ini.fun.select.options[id.ini.fun.select.selectedIndex].text;
+        Object.keys($data.Fun).forEach(function(elem, index)
+        {
+            if($data.Fun[elem].name === value)
+            {
+                id.ini.fun.value.value = elem;
+                updateFunFormContent();
+            }
+        });
+
+    }
+}
+
+function updatePlotFormSelect()
+{
+    var i = 0, val = id.sav.plot.value.value, found = false;
+    for(var property in $data.Plot) if($data.Plot.hasOwnProperty(property))
+    {
+        if(Number(property) == val)
+        {
+            id.sav.plot.select.value = i;
+            break;
+        }
+        ++i;
+    }
+    updatePlotDescription();
+}
+
+function updatePlotDescription()
+{
+    var value = $data.Plot[id.sav.plot.value.value];
+    id.sav.plot.description.innerHTML = (typeof value === 'undefined') ? $vocab.not_available : value[1];
 }
 
 /**
@@ -459,26 +423,25 @@ function saveIniToFile()
         var sect = ini[section];
         for (var key in sect) if(sect.hasOwnProperty(key)) string += key + "=\"" + sect[key] + "\"\r\n";
     }
-    secureDataSave(undertaleDir + "undertale.ini", string);
+    FileUtils.secureSave(INI_FILE, string, undertaleDir, cacheDir);
     floweyLaughOnce();
 }
 
 /**
  * Save SAVE values to file.
  * @method
- * @param {Array} values - Values that will be saved to file.
  * @author crumblingstatue
  */
-function saveSaveValuesToFile(values)
+function saveSaveValuesToFile()
 {
     "use strict";
     var string = "";
-    for(var i = 0; i < saveLines.length; ++i)
+    for(var i = 0; i < window.saveLines.length; ++i)
     {
-        var item = saveLines[i];
+        var item = window.saveLines[i];
         string += item.trim() + ((item.indexOf("\n") > -1) ? "" : "\r\n");
     }
-    secureDataSave(undertaleDir + "file0", string);
+    FileUtils.secureSave(SAVE_FILE, string, undertaleDir, cacheDir);
     floweyLaughOnce();
 }
 
@@ -492,37 +455,7 @@ function saveSaveValuesToFile(values)
 function systemInformationExists(i)
 {
     "use strict";
-    try { return fs.lstatSync(undertaleDir + "system_information_96" + i).isFile(); }
-    catch (e) { return false; }
-}
-
-/**
- * Loads the preset selection dropdown box items.
- * @method
- * @author crumblingstatue
- */
-function initPresetSelect()
-{
-    "use strict";
-    for (var k in presets) if(presets.hasOwnProperty(k)) insert(id.preset.builtin.select, Object.keys(presets).indexOf(k), Object.keys(presets));
-}
-
-/**
- * Initializes user preset dropdown box elements
- * @method
- * @author KockaAdmiralac
- * @author crumblingstatue
- */
-function initUserPresetData()
-{
-    "use strict";
-    var userPresets = localStorage.getItem("userPresets");
-    if (userPresets === null) localStorage.setItem("userPresets", JSON.stringify({}));
-    else
-    {
-        var pres = JSON.parse(userPresets);
-        for (var key in pres) if(pres.hasOwnProperty(key)) insert(id.preset.user.select, key, pres);
-    }
+    return FileUtils.exists(undertaleDir + SYSTEM_INFORMATION_FILE + i);
 }
 
 /**
@@ -534,9 +467,9 @@ function initUserPresetData()
 function loadPreset(name)
 {
     "use strict";
-    var preset = window.presets[Object.keys(window.presets)[name]];
-    window.ini = preset.ini;
-    window.saveLines = preset.lines;
+    var preset = $data.Presets[$data.Presets.keys()[name]];
+    ini = preset.ini;
+    saveLines = preset.lines;
     updateSaveDataForm();
     updatePersistentDataForm();
 }
@@ -552,13 +485,9 @@ function saveUserPreset(name)
     "use strict";
     updateIniFromForm();
     updateSaveValuesFromForm(window.saveLines);
-    var obj = {
-        "ini": ini,
-        "lines": window.saveLines,
-    };
-    var presets = JSON.parse(localStorage.getItem("userPresets"));
+    var obj = {"ini": ini, "lines": window.saveLines}, presets = JSON.parse(localStorage.getItem("userPresets"));
     presets[name] = obj;
-    localStorage.setItem("userPresets",JSON.stringify(presets));
+    localStorage.setItem("userPresets", JSON.stringify(presets));
 }
 
 /**
@@ -573,10 +502,10 @@ function initSystemInformationSave(i)
     "use strict";
     id.si.save[i].addEventListener("click", function()
     {
-        if(confirm("This will affect your game. Continue?")) saveFile(undertaleDir + "system_information_96" + i, "", function()
+        if(confirm($vocab.affect_game)) FileUtils.save(undertaleDir + SYSTEM_INFORMATION_FILE + i, "", function()
         {
             floweyLaughOnce();
-            alert("System information file created!");
+            Alert.success($vocab.success.system_information_created);
             id.si.delete[i].disabled = false;
         });
     }, false);
@@ -592,19 +521,17 @@ function initSystemInformationDelete(i)
 {
     "use strict";
     var button = id.si.delete[i];
-    button.addEventListener('click', function()
+    button.onclick = function()
     {
-        if(confirm("This will affect your game. Continue?"))
-        {
-            try
+        if(confirm($vocab.affect_game)) FileUtils.delete(undertaleDir, SYSTEM_INFORMATION_FILE + i,
+            function()
             {
-                fs.unlink(undertaleDir + "system_information_96" + i);
-                alert("System information file deleted!");
+                Alert.success($vocab.success.system_information_deleted);
                 this.disabled = true;
-            }
-            catch(e) { alert("Error while deleting system information file occurred."); }
-        }
-    }, false);
+            },
+            function(){ Alert.error(error("delete_system_information")); }
+        );
+    };
     button.disabled = !systemInformationExists(i);
 }
 
@@ -623,7 +550,7 @@ function initSystemInformation(i)
 }
 
 /**
- * Initializes dropdown boxes for weapons and armors.
+ * Initializes dropdown boxes for $data.Weapons and $data.Armors.
  * @method
  * @author KockaAdmiralac
  * @author crumblingstatue
@@ -631,18 +558,36 @@ function initSystemInformation(i)
 function initWeaponArmor()
 {
     "use strict";
-    var weaponSelect = id.sav.weapon;
-    var armorSelect = id.sav.armor;
-    weaponSelect.onchange = function()
+    var weaponselect = id.sav.weapon, armorselect = id.sav.armor;
+    weaponselect.onchange = function()
     {
-        var at = weapons[weaponSelect.value];
+        var at = $data.Weapons[weaponselect.value];
         if (typeof at !== "undefined") id.sav.weaponat.value = at;
     };
-    armorSelect.onchange = function()
+    armorselect.onchange = function()
     {
-        var df = armors[armorSelect.value];
+        var df = $data.Armors[armorselect.value];
         if (typeof df !== "undefined") id.sav.armordf.value = df;
     };
+}
+
+/**
+ * Initializes user preset dropdown box elements
+ * @method
+ * @author KockaAdmiralac
+ * @author crumblingstatue
+ */
+function initPresetData()
+{
+    "use strict";
+    var userPresets = localStorage.getItem("userPresets");
+    if(!userPresets) localStorage.setItem("userPresets", JSON.stringify($data.Presets));
+    var pres = JSON.parse(userPresets);
+    for (var key in pres) if(pres.hasOwnProperty(key))
+    {
+        var keys = Object.keys(pres);
+        insert(id.preset.select, keys.indexOf(key), keys);
+    }
 }
 
 /**
@@ -651,25 +596,25 @@ function initWeaponArmor()
  * @author KockaAdmiralac
  * @author crumblingstatue
  */
-function initUserPresetNew()
+function initPresetNew()
 {
     "use strict";
-    id.preset.user.new.addEventListener("click", function()
+    id.preset.new.addEventListener("click", function()
     {
-        var name = window.prompt("Enter the name for your new preset");
-        if (name === null || name === "") window.alert("You did not enter a valid name, preset not created.");
+        var name = window.prompt($vocab.enter_preset_name);
+        if (name === null || name === "") Alert.error($vocab.error.preset_not_created);
         else
         {
             saveUserPreset(name);
-            var presetSelect = id.preset.user.select;
+            var presetselect = id.preset.select;
             var option = document.createElement("option");
             var text = document.createTextNode(name);
             option.appendChild(text);
-            presetSelect.appendChild(option);
-            presetSelect.value = name;
-            id.preset.user.load.disabled = false;
-            id.preset.user.save.disabled = false;
-            id.preset.user.delete.disabled = false;
+            presetselect.appendChild(option);
+            presetselect.value = name;
+            id.preset.load.disabled = false;
+            id.preset.save.disabled = false;
+            id.preset.delete.disabled = false;
         }
     }, false);
 }
@@ -680,12 +625,12 @@ function initUserPresetNew()
  * @author KockaAdmiralac
  * @author crumblingstatue
  */
-function initUserPresetSave()
+function initPresetSave()
 {
     "use strict";
-    id.preset.user.save.addEventListener("click", function()
+    id.preset.save.addEventListener("click", function()
     {
-        var name = id.preset.user.select.value;
+        var name = id.preset.select.value;
         if (name !== null && name !== "") saveUserPreset(name);
         else window.alert("You need to select a valid preset first!");
     }, false);
@@ -697,23 +642,22 @@ function initUserPresetSave()
  * @author KockaAdmiralac
  * @author crumblingstatue
  */
-function initUserPresetLoad()
+function initPresetLoad()
 {
     "use strict";
-    id.preset.user.load.addEventListener("click", function()
+    id.preset.load.addEventListener("click", function()
     {
-        var name = id.preset.user.select.value;
+        var el = id.preset.select;
+        var name = el.options[el.selectedIndex].innerHTML;
         if (name !== null && name !== "")
         {
-            var item = localStorage.getItem("userPresets");
-            var presets = JSON.parse(item);
-            var obj = presets[name];
+            var obj = JSON.parse(localStorage.getItem("userPresets"))[name];
             window.ini = obj.ini;
             window.saveLines = obj.lines;
             updateSaveDataForm();
             updatePersistentDataForm();
         }
-        else window.alert("You need to select a valid preset first!");
+        else Alert.error($vocab.error.enter_valid_preset);
     }, false);
 }
 
@@ -723,12 +667,12 @@ function initUserPresetLoad()
  * @author KockaAdmiralac
  * @author crumblingstatue
  */
-function initUserPresetDelete()
+function initPresetDelete()
 {
     "use strict";
-    id.preset.user.delete.addEventListener("click", function()
+    id.preset.delete.addEventListener("click", function()
     {
-        var selection = id.preset.user.select;
+        var selection = id.preset.select;
         var name = selection.value;
         var children = selection.childNodes;
         for (var i = 0; i < children.length; i++) if (children[i].value === name) selection.removeChild(children[i]);
@@ -736,11 +680,11 @@ function initUserPresetDelete()
         var presets = JSON.parse(item);
         delete presets[name];
         localStorage.setItem("userPresets", JSON.stringify(presets));
-        if (id.preset.user.select.value === "")
+        if (id.preset.select.value === "")
         {
-            id.preset.user.load.disabled = true;
-            id.preset.user.save.disabled = true;
-            id.preset.user.delete.disabled = true;
+            id.preset.load.disabled = true;
+            id.preset.save.disabled = true;
+            id.preset.delete.disabled = true;
         }
     }, false);
 }
@@ -751,47 +695,46 @@ function initUserPresetDelete()
  * @author KockaAdmiralac
  * @author crumblingstatue
  */
-function initUserPresetEnable()
+function initPresetEnable()
 {
     "use strict";
-    if (id.preset.user.select.value !== "")
+    if (id.preset.select.options.length > 0)
     {
-        id.preset.user.load.disabled = false;
-        id.preset.user.save.disabled = false;
-        id.preset.user.delete.disabled = false;
+        id.preset.load.disabled = false;
+        id.preset.save.disabled = false;
+        id.preset.delete.disabled = false;
     }
 }
 
-/**
- * Initializes everything related to user presets.
- * @method
- * @author KockaAdmiralac
- */
-function initUserPresets()
+function initPresetReset()
 {
-    "use strict";
-    initUserPresetData();
-    initUserPresetNew();
-    initUserPresetSave();
-    initUserPresetLoad();
-    initUserPresetDelete();
-    initUserPresetEnable();
+    id.preset.reset.addEventListener('click', function()
+    {
+        if(confirm($vocab.restore_presets))
+        {
+            localStorage.clear();
+            localStorage.setItem("userPresets", JSON.stringify($data.Presets));
+            id.preset.select.innerHTML = "";
+            initPresetData();
+        }
+    }, false);
 }
 
 /**
- * Initializes "Load" button for built-in presets.
+ * Initializes everything related to user $data.Presets.
  * @method
  * @author KockaAdmiralac
- * @author crumblingstatue
  */
-function initBuiltinPresetLoad()
+function initPresets()
 {
     "use strict";
-    id.preset.builtin.load.addEventListener("click", function()
-    {
-        var name = id.preset.builtin.select.value;
-        loadPreset(name);
-    }, false);
+    initPresetData();
+    initPresetNew();
+    initPresetSave();
+    initPresetLoad();
+    initPresetDelete();
+    initPresetEnable();
+    initPresetReset();
 }
 
 /**
@@ -803,12 +746,12 @@ function initBuiltinPresetLoad()
 function initFloweyImg()
 {
     "use strict";
-    if (localStorage.getItem("laughed") === "true") id.floweyimg.src = "/www/img/flowey_evil.png";
-    id.floweyimg.addEventListener("click", function()
+    if (localStorage.getItem("laughed") === "true") id.floweyimg.src = FLOWEY_FILE;
+    id.floweyimg.onclick = function()
     {
-        id.floweyimg.src = "/www/img/flowey_wink.png";
+        id.floweyimg.src = FLOWEY_WINK;
         localStorage.setItem("laughed", false);
-    }, false);
+    };
 }
 
 /**
@@ -834,9 +777,9 @@ function initDefaultControls(opt)
 function initDefaultLoad(opt)
 {
     "use strict";
-    id.default.load[opt].addEventListener('click', function()
+    id.default.load[opt].onclick = function()
     {
-        if(confirm("This will affect your game. Continue?"))
+        if(confirm($vocab.affect_game))
         {
             if(opt === "ini")
             {
@@ -849,7 +792,7 @@ function initDefaultLoad(opt)
                 updateSaveDataForm();
             }
         }
-    }, false);
+    };
 }
 
 /**
@@ -861,9 +804,9 @@ function initDefaultLoad(opt)
 function initDefaultSave(opt)
 {
     "use strict";
-    id.default.save[opt].addEventListener('click', function()
+    id.default.save[opt].onclick = function()
     {
-        if(confirm("This will affect your game. Continue?"))
+        if(confirm($vocab.affect_game))
         {
             if(opt === "ini")
             {
@@ -876,15 +819,29 @@ function initDefaultSave(opt)
                 saveSaveValuesToFile();
             }
         }
-    }, false);
+    };
 }
 
-function initFunCheckbox()
+function initFun()
 {
-    id.ini.fun.check.addEventListener('click', function()
+    var hasFun = ini.General.Fun !== undefined;
+    id.ini.fun.check.checked = hasFun;
+    id.ini.fun.value.value = parseInt(ini.General[hasFun ? "Fun" : "fun"]);
+    id.ini.fun.check.onclick = updateFunFormDisplay;
+    id.ini.fun.select.onchange = updateFunFormContentFromSelect;
+    id.ini.fun.value.oninput = updateFunFormContent;
+}
+
+function initPlot()
+{
+    id.sav.plot.value.value = saveLines[542];
+    updatePlotFormSelect();
+    id.sav.plot.value.oninput = updatePlotFormSelect;
+    id.sav.plot.select.onchange = function()
     {
-        updateFunForm();
-    }, false);
+        id.sav.plot.value.value = $data.Plot.keys()[id.sav.plot.select.value];
+        updatePlotDescription();
+    };
 }
 
 /**
@@ -896,13 +853,28 @@ function onIniAndSaveLoaded()
 {
     "use strict";
     ["sav", "ini"].forEach(function(opt) { initDefaultControls(opt); });
-    initBuiltinPresetLoad();
-    initPresetSelect();
-    initUserPresets();
-    initFunCheckbox();
+    initPresets();
+    initFun();
+    initPlot();
     for(var i = 2; i < 4; ++i) initSystemInformation(i);
     initWeaponArmor();
     initFloweyImg();
+    updateFunForm();
+}
+
+function loadGameData(file, callback, error)
+{
+    "use strict";
+    FileUtils.load(undertaleDir + file, function(lists)
+    {
+        callback.call(this, lists);
+        if(-- currLoading === 0 && !dataLoaded)
+        {
+            dataLoaded = true;
+            onIniAndSaveLoaded();
+        }
+    },
+    function() { Alert.error(error("loading_" + error + "_file")); });
 }
 
 /**
@@ -913,16 +885,11 @@ function onIniAndSaveLoaded()
 function loadSave()
 {
     "use strict";
-    loadFile(undertaleDir + "file0", function(lists)
+    loadGameData(SAVE_FILE, function(lists)
     {
         saveLines = lists.split("\n");
         updateSaveDataForm();
-        if(-- currLoading === 0 && !dataLoaded)
-        {
-            dataLoaded = true;
-            onIniAndSaveLoaded();
-        }
-    });
+    }, "save");
 }
 
 /**
@@ -933,29 +900,11 @@ function loadSave()
 function loadINI()
 {
     "use strict";
-    loadFile(undertaleDir + "undertale.ini", function(text)
+    loadGameData(INI_FILE, function(lists)
     {
-        ini = parseIniFromText(text);
+        ini = parseIniFromText(lists);
         updatePersistentDataForm();
-        if(-- currLoading === 0 && !dataLoaded)
-        {
-            dataLoaded = true;
-            onIniAndSaveLoaded();
-        }
-    });
-}
-
-/**
- * Called when dropdown box lists are populated.
- * @method
- * @author KockaAdmiralac
- */
-function onListsCreated()
-{
-    "use strict";
-    currLoading = 2;
-    loadSave();
-    loadINI();
+    }, "ini")
 }
 
 /**
@@ -967,21 +916,31 @@ function onListsCreated()
 function createLists()
 {
     "use strict";
-    loadSelectFromObj(id.sav.location, rooms);
-    loadSelectFromObj(id.ini.location, rooms);
-    Object.keys(states).forEach(function(state) { loadSelectFromObj(id.sav.state[state.toLowerCase()], states[state]); }, this);
+    loadSelectFromObj(id.sav.location, $data.Rooms);
+    loadSelectFromObj(id.ini.location, $data.Rooms);
+    var values = [];
+    for(var property in $data.Fun) if($data.Fun.hasOwnProperty(property)) values.push($data.Fun[property].name);
+    loadSelectFromObj(id.ini.fun.select, values.filter(function(elem, index){ return values.indexOf(elem) === index; }));
+    values = [];
+    for(var property in $data.Plot) if($data.Plot.hasOwnProperty(property)) values.push($data.Plot[property][0]);
+    loadSelectFromObj(id.sav.plot.select, values);
+    values = [];
+    for(var property in $data.Languages) if($data.Languages.hasOwnProperty(property)) values.push($data.Languages[property]);
+    loadSelectFromObj(id.language.select, values);
+    Object.keys($data.States).forEach(function(state) { loadSelectFromObj(id.sav.state[state.toLowerCase()], $data.States[state]); });
     insertInvLists();
     insertCellLists();
-    onListsCreated();
 }
 
 function createIDs()
 {
-    createID(window, ids, "");
+    "use strict";
+    createID(window, $data.IDs, "");
 }
 
 function createID(obj, node, string)
 {
+    "use strict";
     var name = node.name;
     obj[name] = {};
     if(name !== "id") string += "-";
@@ -996,6 +955,39 @@ function createID(obj, node, string)
     }, this);
 }
 
+function createFun()
+{
+    "use strict";
+    for(var property in $data.Fun) if($data.Fun.hasOwnProperty(property)) if(property.indexOf("-") > -1)
+    {
+        var oldProperty = $data.Fun[property], splitName = property.split("-");
+        // I know this is really costing me some memory...
+        for(var i = Number(splitName[0]), len = Number(splitName[1]) + 1; i < len; ++i) $data.Fun[i] = oldProperty;
+        delete $data.Fun[property];
+    }
+    else if(property[0] === '>')
+    {
+        maxFun = Number(property.substring(1, property.length));
+        $data.Fun[maxFun] = $data.Fun[property];
+        delete $data.Fun[property];
+    }
+}
+
+function initDocumentStrings()
+{
+    for(var property in $vocab.inner) if($vocab.inner.hasOwnProperty(property)) $("#vocab-" + property).html($vocab.inner[property]);
+    for(var property in $vocab.value) if($vocab.value.hasOwnProperty(property)) $("#vocab-" + property).val($vocab.value[property]);
+}
+
+function createLanguage()
+{
+    id.language.button.onclick = function()
+    {
+        localStorage.setItem("lang", $data.Languages.keys()[id.language.select.value]);
+        Alert.success($vocab.refresh_vocab);
+    };
+}
+
 /**
  * Called when data is loaded.
  * @method
@@ -1006,8 +998,13 @@ function onLoaded()
     "use strict";
     createIDs();
     showTab(3);
+    createFun();
     createLists();
-    onListsCreated();
+    createLanguage();
+    initDocumentStrings();
+    currLoading = 2;
+    loadSave();
+    loadINI();
 }
 
 /**
@@ -1019,27 +1016,9 @@ function onLoaded()
 function showTab(tabID)
 {
     "use strict";
-    if(currTab)id.tab[currTab].style.display = "none";
+    if(currTab) id.tab[currTab].style.display = "none";
     id.tab[tabID].style.display = "block";
     currTab = tabID;
-}
-
-/**
- * Loads data from 'data' folder and puts it in local variables.
- * @method
- * @author KockaAdmiralac
- */
-function loadData()
-{
-    "use strict";
-    loadJSONFile("Rooms", "rooms");
-    loadJSONFile("Weapons", "weapons");
-    loadJSONFile("Items", "items");
-    loadJSONFile("States", "states");
-    loadJSONFile("Armors", "armors");
-    loadJSONFile("Cell", "cellOpts");
-    loadJSONFile("Presets", "presets");
-    loadJSONFile("IDs", "ids")
 }
 
 /**
@@ -1047,10 +1026,32 @@ function loadData()
  * @method
  * @author KockaAdmiralac
  */
-function start()
+window.onload = function()
 {
     "use strict";
-    loadData();
-}
-
-document.addEventListener("DOMContentLoaded", start);
+    var language = localStorage.getItem("lang");
+    if(!language)
+    {
+        localStorage.setItem("lang", "en");
+        language = "en";
+    }
+    FileUtils.load("/www/lang/" + language + ".json", function(json)
+    {
+        $vocab = JSON.parse(json);
+        FileUtils.createCacheFolder();
+        FileUtils.load("/www/data/" + FILES_FILE + ".json", function(json)
+        {
+            JSON.parse(json).forEach(function(file)
+            {
+                ++ currLoading;
+                FileUtils.load("/www/data/" + file + ".json", function(json)
+                {
+                    $data[file] = JSON.parse(json);
+                    if(-- currLoading === 0) onLoaded();
+                });
+            },
+            function(){ Alert.error(error("loading_data_file")); });
+        },
+        function(){ Alert.error(error("loading_files_file")); });
+    })
+};

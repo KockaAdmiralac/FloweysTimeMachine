@@ -73,6 +73,10 @@ select:focus {
     background-color: #FFFFFF;
 }
 
+#language-container {
+    float: right;
+}
+
 #nav li {
   margin: 0;
   padding: 0;
@@ -103,7 +107,6 @@ select:focus {
 #tab-2 {
     width: 120%;
     overflow: scroll;
-    /*direction: rtl;*/
     border: 1px solid black;
 }
 
@@ -121,4 +124,15 @@ header img {
   border:1px solid #ccc;
   overflow:auto;
   padding: 10px;
+}
+
+#alerts {
+    position: absolute;
+    width: 98%;
+}
+
+.alert {
+    border: 2px solid black;
+    padding: 5px;
+    text-align: center;
 }
